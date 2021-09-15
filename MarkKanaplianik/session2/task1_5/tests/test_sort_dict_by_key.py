@@ -1,4 +1,4 @@
-from session2.task1_5.sort_dict_by_key.sort_dict_by_key import sort_dict_by_key
+from MarkKanaplianik.session2.task1_5.sort_dict_by_key.sort_dict_by_key import sort_dict_by_key
 
 
 def test_sort_dict_by_key_positive01():

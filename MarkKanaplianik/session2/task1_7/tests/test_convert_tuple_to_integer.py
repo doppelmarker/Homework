@@ -1,4 +1,4 @@
-from session2.task1_7.convert_tuple.convert_tuple import convert_tuple_to_integer
+from MarkKanaplianik.session2.task1_7.convert_tuple.convert_tuple import convert_tuple_to_integer
 
 
 def test_convert_tuple_to_integer_positive01():

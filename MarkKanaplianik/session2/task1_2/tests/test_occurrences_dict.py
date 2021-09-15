@@ -1,4 +1,4 @@
-from session2.task1_2.occurrences_dict.occurrences_dict import get_occurrences_dict
+from MarkKanaplianik.session2.task1_2.occurrences_dict.occurrences_dict import get_occurrences_dict
 
 
 def test_get_occurrences_positive01():

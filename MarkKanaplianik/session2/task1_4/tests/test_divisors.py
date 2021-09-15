@@ -1,4 +1,4 @@
-from session2.task1_4.divisors.divisors import find_all_divisors
+from MarkKanaplianik.session2.task1_4.divisors.divisors import find_all_divisors
 
 
 def test_find_all_divisors_positive01():

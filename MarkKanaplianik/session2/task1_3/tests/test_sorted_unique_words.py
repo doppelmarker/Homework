@@ -1,4 +1,4 @@
-from session2.task1_3.sorted_unique_words.sorted_unique_words import (
+from MarkKanaplianik.session2.task1_3.sorted_unique_words.sorted_unique_words import (
     get_sorted_unique_words,
 )
 

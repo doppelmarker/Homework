@@ -1,4 +1,4 @@
-from session2.task1_1.str_length.count_str_length import count_str_length
+from MarkKanaplianik.session2.task1_1.str_length.count_str_length import count_str_length
 
 
 def test_count_str_length_positive01():

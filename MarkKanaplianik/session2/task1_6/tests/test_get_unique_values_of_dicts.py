@@ -1,4 +1,4 @@
-from session2.task1_6.print_unique_values_of_dicts.unique_values_of_dicts import (
+from MarkKanaplianik.session2.task1_6.print_unique_values_of_dicts.unique_values_of_dicts import (
     get_unique_values_of_dicts,
 )
 
