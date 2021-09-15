@@ -1,0 +1,63 @@
+1. Create a local folder and initialize it for git
+git init SampleRepo
+
+2. Create a text file in the folder and commit it
+cd SampleRepo
+touch file.txt
+git add .
+git commit -m "first commit"
+
+3. Create a remote repository on GitHub
+git remote add origin https://github.com/doppelmarker/git_task.git
+
+4. Push the local repository to GitHub
+git push --all origin
+
+5. Create a new branch (develop) and switch to it
+git checkout -b develop
+
+6. Create a new branch from 'develop' and switch to it
+git checkout -b after_develop
+
+7. Add the first line in the text file, commit, and push to remote
+nano file.txt
+git add .
+git commit -m "add first line in after_develop branch"
+git push --all origin
+
+8. Clone your repository from GitHub into a separate folder
+cd ..
+git clone https://github.com/doppelmarker/git_task.git SampleRepo1
+
+9. Create another branch from 'develop' and switch to it using cloned project
+cd SampleRepo1
+git checkout develop
+git checkout -b most_recent_branch
+
+10. Add the first line of the text file (different from the first branch), commit, and push on remote
+nano file.txt
+git add .
+git commit -m "add first line in most_recent_branch branch"
+git push --all origin
+
+11. Switch to develop
+git checkout develop
+
+12  Merge the first branch and push changes
+git merge origin/after_develop
+git push --all origin
+
+13. Merge the second branch and push changes
+git merge most_recent_branch
+
+14. Resolve conflict
+nano file.txt
+
+16. Commit and push a separate text file with a list of all the commands, which were used to solve the problem
+git add .
+git commit -m "resolve conflict between after_develop and most_recent_branch branches"
+touch commands.txt
+nano commands.txt
+git add .
+git commit -m "add commands.txt file"
+git push --all origin
