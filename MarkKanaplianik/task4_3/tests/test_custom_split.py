@@ -1,4 +1,4 @@
-from MarkKanaplianik.session4.task4_3.custom_split.custom_split import custom_split
+from MarkKanaplianik.task4_3.custom_split.custom_split import custom_split
 
 
 def test_custom_split_whitespaces_mode_limitless():

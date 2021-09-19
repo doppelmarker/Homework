@@ -1,4 +1,4 @@
-from MarkKanaplianik.session4.task4_2.check_palindrome.check_palindrome import is_palindrome
+from MarkKanaplianik.task4_2.check_palindrome.check_palindrome import is_palindrome
 
 
 def test_is_palindrome_positive01():

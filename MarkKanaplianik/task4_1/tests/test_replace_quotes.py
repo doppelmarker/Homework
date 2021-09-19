@@ -1,6 +1,6 @@
 import pytest
 
-from MarkKanaplianik.session4.task4_1.replace_quotes.replace_quotes import replace_quotes
+from MarkKanaplianik.task4_1.replace_quotes.replace_quotes import replace_quotes
 
 
 def test_replace_quotes_single_to_double():
