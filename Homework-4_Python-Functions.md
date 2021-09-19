@@ -32,22 +32,22 @@ Implement a function `get_digits(num: int) -> Tuple[int]` which returns a tuple
 of a given integer's digits.
 Example:
 ```python
->>> split_by_index(87178291199)
+>>> get_digits(87178291199)
 (8, 7, 1, 7, 8, 2, 9, 1, 1, 9, 9)
 ```
 
 ### Task 4.6
-Implement a function `get_shortest_word(s: str) -> str` which returns the
+Implement a function `get_longest_word(s: str) -> str` which returns the
 longest word in the given string. The word can contain any symbols except
 whitespaces (` `, `\n`, `\t` and so on). If there are multiple longest words in
 the string with a same length return the word that occures first.
 Example:
 ```python
 
->>> get_shortest_word('Python is simple and effective!')
+>>> get_longest_word('Python is simple and effective!')
 'effective!'
 
->>> get_shortest_word('Any pythonista like namespaces a lot.')
+>>> get_longest_word('Any pythonista like namespaces a lot.')
 'pythonista'
 ```
 
@@ -137,4 +137,3 @@ print(combine_dicts(dict_1, dict_2, dict_3)
 * [Functions](https://python-scripts.com/functions-python)
 * [Defining your own python function](https://realpython.com/defining-your-own-python-function/)
 * [Python Lambda](https://realpython.com/python-lambda/)
-
