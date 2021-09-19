@@ -23,5 +23,5 @@ def split_by_index(s: str, indexes: List[int]) -> List[str]:
         begin = current
         current = idx
         result.append(s[begin:current])
-    result.append(s[current:len(s)])
+    result.append(s[current : len(s)])
     return result
