@@ -19,9 +19,10 @@ Note: use `string.ascii_lowercase` for list of alphabet letters
 set()
 >>> func_1_3(*test_strings).symmetric_difference({'h', 'l', 'o'})
 set()
->>> func_1_4(*test_strings)
-{'a', 'b', 'c', 'f', 'g', 'i', 'j', 'k', 'm', 'q', 's', 'u', 'v', 'x', 'z'}
+>>> func_1_4(*test_strings).symmetric_difference({'a', 'b', 'c', 'f', 'g', 'i', 'j', 'k', 'm', 'q', 's', 'u', 'v', 'x', 'z'})
+set()
 """
+import string
 from functools import reduce
 
 
@@ -50,4 +51,13 @@ def func_1_3(*args):
                 if counter == 2:
                     result.add(char)
                     break
+    return result
+
+
+def func_1_4(*args):
+    alphabet = string.ascii_lowercase
+    result = set()
+    for char in alphabet:
+        if not any(map(lambda word: char in word, args)):
+            result.add(char)
     return result
