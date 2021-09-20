@@ -17,8 +17,8 @@ Note: use `string.ascii_lowercase` for list of alphabet letters
 {'o'}
 >>> func_1_2(*test_strings).symmetric_difference({'d', 'e', 'h', 'l', 'n', 'o', 'p', 'r', 't', 'w', 'y'})
 set()
->>> func_1_3(*test_strings)
-{'h', 'l', 'o'}
+>>> func_1_3(*test_strings).symmetric_difference({'h', 'l', 'o'})
+set()
 >>> func_1_4(*test_strings)
 {'a', 'b', 'c', 'f', 'g', 'i', 'j', 'k', 'm', 'q', 's', 'u', 'v', 'x', 'z'}
 """
@@ -37,3 +37,17 @@ def func_1_1(*args):
 
 def func_1_2(*args):
     return set(reduce(set.union, (set(word) for word in args)))
+
+
+def func_1_3(*args):
+    characters = func_1_2(*args)
+    result = set()
+    for char in characters:
+        counter = 0
+        for word in args:
+            if char in word:
+                counter += 1
+                if counter == 2:
+                    result.add(char)
+                    break
+    return result
