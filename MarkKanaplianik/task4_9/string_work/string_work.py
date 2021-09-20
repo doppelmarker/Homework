@@ -12,16 +12,17 @@ Implement a bunch of functions which receive a changeable number of strings and 
 
 Note: use `string.ascii_lowercase` for list of alphabet letters
 
-# >>> test_strings = ["hello", "world", "python", ]
-# >>> func_1_1(*test_strings)
+>>> test_strings = ["hello", "world", "python"]
+>>> func_1_1(*test_strings)
 {'o'}
-# >>> test_1_2(*test_strings)
-{'d', 'e', 'h', 'l', 'n', 'o', 'p', 'r', 't', 'w', 'y'}
-# >>> test_1_3(*test_strings)
+>>> func_1_2(*test_strings).symmetric_difference({'d', 'e', 'h', 'l', 'n', 'o', 'p', 'r', 't', 'w', 'y'})
+set()
+>>> func_1_3(*test_strings)
 {'h', 'l', 'o'}
-# >>> test_1_4(*test_strings)
+>>> func_1_4(*test_strings)
 {'a', 'b', 'c', 'f', 'g', 'i', 'j', 'k', 'm', 'q', 's', 'u', 'v', 'x', 'z'}
 """
+from functools import reduce
 
 
 def func_1_1(*args):
@@ -34,9 +35,5 @@ def func_1_1(*args):
     return result
 
 
-words = [
-    "hello",
-    "worldl",
-    "pythonl",
-]
-print(func_1_1(*words))
+def func_1_2(*args):
+    return set(reduce(set.union, (set(word) for word in args)))
