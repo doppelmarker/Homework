@@ -31,11 +31,3 @@ def work(path_file_read: Path, path_file_write: Path):
 
     with open(path_file_write, "w") as writer:
         write_file(writer, lines)
-
-
-test_dir = Path(Path.cwd(), "../../..", "data")
-name_file_read = "unsorted_names.txt"
-path_file_read = Path(test_dir, name_file_read)
-name_file_write = "sorted_names.txt"
-path_file_write = Path(test_dir, name_file_write)
-work(path_file_read, path_file_write)
