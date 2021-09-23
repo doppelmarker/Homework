@@ -40,8 +40,8 @@ def sum_of_numbers(*numbers: Union[int, float]) -> int:
 
 def main():
     """Run task."""
-    # Нет варнинга, хотя, как я считаю, должен быть, ведь wraps() скопировал аннотации функции sum_of_numbers во wrapper
-    # sum_of_numbers("", 1, "", 1.12)
+    # Нет варнинга при передаче аргументов, не являющихся int или float, хотя, как я считаю, должен быть, ведь wraps
+    # скопировал аннотации функции sum_of_numbers во wrapper. Пример: sum_of_numbers("", 1, "", 1.12)
     print(sum_of_numbers(1, 2, 3, 4, 5))
     print(sum_of_numbers(1, 2, 3))
     print(sum_of_numbers(1, 2))
