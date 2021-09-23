@@ -5,7 +5,7 @@ Function:
     call_once
 """
 from functools import wraps
-from typing import Union
+from typing import Iterable, Union, cast
 
 
 def call_once(f):
@@ -33,9 +33,9 @@ def call_once(f):
 
 
 @call_once
-def sum_of_numbers(*numbers: Union[int, float]) -> int:
+def sum_of_numbers(*numbers: Union[int, float]) -> Union[int, float]:
     """Sum numbers."""
-    return sum(numbers)
+    return sum(cast(Iterable[Union[int, float]], numbers))
 
 
 def main():
