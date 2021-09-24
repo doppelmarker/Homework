@@ -1,0 +1,92 @@
+---
+|1|
+---
+Run the module `modules/mod_a.py`. Check its result. Explain why does this happen.
+
+The output:
+
+Module c
+Module b
+Module a
+5
+----------------
+At the beginning, the interpreter meets the line "import mod_c".
+mod_c starts to get imported.
+print("Module c") gets executed.
+After that, in the global scope of mod_a,
+by looking inside the dict of globals() (alternatively, this is equal to call sys.modules[__name__].__dict__)
+we can observe the presence of key "mod_c" with the associated module object.
+
+Calling "import mod_b" works in the very same way:
+1) interpreter meets the line "import mod_c", but as it is already present in sys.modules, Python performs some optimization
+to avoid repeated import;
+2) print("Module b") gets executed;
+3) mod_c.x = 5 - this changes the value of x inside the mod_c module object to 5
+Now, again, in the global scope of mod_a mod_b object can be found similarly.
+
+Further on, print("Module a") happens, and finally, mod_c.x value is printed out. In fact, when importing mod_b,
+it was reassigned, but the new value was also 5, like the original one, that's why in the console output we see 5.
+
+---
+|2|
+---
+Try to change x to a list `[1,2,3]`. Explain the result.
+
+The output:
+
+Module c
+Module b
+Module a
+5
+-------------------
+The same output can be noticed. As I explained in the previous example, when mod_b is being imported, the value of
+mod_c.x gets reassigned to a new one, in our case it is 5, so the list [1, 2, 3] gets replaced to 5 and
+printing mod_c.x again, we get exactly the same output.
+
+---
+|3|
+---
+Try to change import to `from x import *` where x - module names. Explain the result.
+
+Firstly, I changed "import mod_c" to "from mod_c import *" and looked through the behaviour.
+
+The output:
+
+Module c
+Module b
+Module a
+[1, 2, 3]
+-----------------------
+Now, by calling globals() we can see, that in the dictionary there is no key "mod_c" with its module object,
+but there is key "x" with the value [1, 2, 3]. This means, that importing stuff using "from module import stuff" syntax
+imports the stuff object directly to our module, and it appears in its __dict__.
+
+So, now, as we don't have the module object in our module's __dict__, but have the x directly imported, we can refer to
+it directly: print(x).
+-----------------------
+
+Secondly, I changed "import mod_b" to "from mod_b import *" and looked through the behaviour once again.
+
+After doing this, the output will not change, but calling "import mod_c" will cause us see the mod_c
+module object to become imported.
+
+-----------------------
+Summing up, let's launch this code in the mod_a.
+
+from mod_c import *
+from mod_b import *
+
+print("Module a")
+print(mod_c.x)
+print(x)
+
+Output:
+
+Module c
+Module b
+Module a
+5
+[1, 2, 3]
+
+When performing "from mod_c import *" we get x in the __dict__ of current module.
+When performing "from mod_b import *" the value of x inside the object module mod_c is being changed to 5.
