@@ -19,6 +19,5 @@ def read_file(reader: TextIO):
 
 
 def work(path_file_read: Path, path_file_write: Path):
-    with open(path_file_read) as reader:
-        with open(path_file_write, "w") as writer:
-            writer.writelines(sorted(reader))
+    with open(path_file_read) as reader, open(path_file_write, "w") as writer:
+        writer.writelines(sorted(reader))

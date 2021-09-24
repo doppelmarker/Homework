@@ -41,6 +41,5 @@ def change_test_dir(request):
 def test_sort_names_file_positive_01(change_test_dir, path_file_unsorted, path_file_sorted):
     work(path_file_unsorted, path_file_sorted)
 
-    with open(path_file_unsorted) as reader_unsorted:
-        with open(path_file_sorted) as reader_sorted:
-            assert list(sorted(reader_unsorted)) == list(reader_sorted)
+    with open(path_file_unsorted) as reader_unsorted, open(path_file_sorted) as reader_sorted:
+        assert list(sorted(reader_unsorted)) == list(reader_sorted)
