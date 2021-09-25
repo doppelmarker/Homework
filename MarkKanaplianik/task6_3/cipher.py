@@ -10,6 +10,8 @@ from bidict import bidict
 
 
 def bidirectional_letter_transformer(text, cipher_dict):
+    """Helper generator function to perform encoding of a letter and vice versa."""
+
     for letter in text:
         encoded_letter = cipher_dict.get(letter.lower(), letter)
         if letter.isupper():
