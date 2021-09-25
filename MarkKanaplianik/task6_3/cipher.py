@@ -20,6 +20,8 @@ def bidirectional_letter_transformer(text, cipher_dict):
 class Cipher:
     """Class to encode and decode text according to keyword cipher.
 
+    Cipher class utilizes bidict from bidict package in order to easily perform encoding and decoding operations.
+
     Methods
     -------
     encode(text):
