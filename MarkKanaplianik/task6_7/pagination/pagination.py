@@ -52,7 +52,7 @@ class Pagination:
     -------
     _update_pagination(text, page_size):
         Private method which updates the state of pagination when
-        either __init__ is called or page_size and text properties are accessed
+        either __init__ is called or page_size and text properties are set new values
     count_items_on_page(page_index):
         Returns the amount of symbols on the page specified by page_index
     display_page(page_index):
