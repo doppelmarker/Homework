@@ -22,12 +22,12 @@ class File:
         return self.file
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        self.file.close()
+        eprint(f"File descriptor was closed correctly!")
         if exc_type:
             eprint("Traceback:")
             traceback.print_tb(exc_tb)
             eprint(f"{exc_type.__name__} was thrown inside {File.__name__} context manager: {exc_val}!")
-            self.file.close()
-            eprint(f"File descriptor was closed correctly!")
             return True
 
 
