@@ -22,7 +22,7 @@ class File:
         return self.file
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        if exc_type is not None:
+        if exc_type:
             eprint("Traceback:")
             traceback.print_tb(exc_tb)
             eprint(f"{exc_type.__name__} was thrown inside {File.__name__} context manager: {exc_val}!")
