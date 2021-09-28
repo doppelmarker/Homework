@@ -1,0 +1,1 @@
+Written from inside of custom context manager.
