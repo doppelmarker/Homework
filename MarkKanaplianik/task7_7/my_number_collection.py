@@ -10,6 +10,8 @@ from typing import Iterable
 class Validator:
     @staticmethod
     def validate_init(f):
+        """Validates init of MyNumberCollection."""
+
         @wraps(f)
         def wrapper(self, *args):
             args_amount = len(args)
@@ -41,6 +43,8 @@ class Validator:
 
     @staticmethod
     def validate_append(f):
+        """Validates append of MyNumberCollection."""
+
         @wraps(f)
         def wrapper(self, e):
             if not isinstance(e, Number):
@@ -51,6 +55,8 @@ class Validator:
 
 
 class CustomCollectionIndexError(IndexError):
+    """Raised if invalid index was passed when accessing elements of MyNumberCollection."""
+
     pass
 
 
