@@ -1,0 +1,41 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.0.1
+    hooks:
+      - id: end-of-file-fixer
+      - id: check-ast
+        stages: [commit]
+
+  - repo: local
+
+    hooks:
+      - id: black
+        name: black
+        entry: poetry
+        args:
+          - run
+          - black
+        language: system
+        types: [python]
+        stages: [commit]
+
+      - id: flake8
+        name: flake8
+        entry: poetry
+        args:
+          - run
+          - flake8
+        language: system
+        always_run: true
+        pass_filenames: false
+        stages: [ push ]
+
+      - id: isort
+        name: isort
+        entry: poetry
+        args:
+          - run
+          - isort
+        language: system
+        types: [ python ]
+        stages: [ commit ]
