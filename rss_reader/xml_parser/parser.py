@@ -36,4 +36,4 @@ class Parser:
         except XMLError:
             pass
         finally:
-            tokenizer.xml.close()
+            tokenizer.xml_io.close()

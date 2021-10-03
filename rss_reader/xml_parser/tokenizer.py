@@ -38,7 +38,7 @@ class UnexpectedEndOfDocumentError(XMLError):
 
 class Tokenizer:
     def __init__(self, xml):
-        self.xml = StringIO(xml)
+        self.xml_io = StringIO(xml)
         self._cutoff_head()
         self.attributes = []
         self.token_type = TokenType.BOF
@@ -104,13 +104,13 @@ class Tokenizer:
             )
 
     def _read_char(self, skip_ws=False):
-        char = self.xml.read(1)
+        char = self.xml_io.read(1)
         if skip_ws:
             if char == "":
                 raise UnexpectedEndOfDocumentError("unexpected end of document")
         while True:
             if char != "" and skip_ws and char.isspace():
-                char = self.xml.read(1)
+                char = self.xml_io.read(1)
                 continue
             return char
 
