@@ -26,14 +26,15 @@ class Parser:
                     if len(elementStack) > 1:
                         elementStack.pop()
                 elif tokenizer.token_type == TokenType.TEXT:
-                    elementStack[-1].children.append(token)
-                    token.parent = elementStack[-1]
+                    if not tokenizer.text.isspace():
+                        elementStack[-1].children.append(token)
+                        token.parent = elementStack[-1]
 
             if len(elementStack) != 0:
                 return elementStack.pop()
             else:
                 raise EmptyXMLDocumentError("empty xml document")
-        except XMLError:
-            pass
+        except XMLError as e:
+            print(e)
         finally:
             tokenizer.xml_io.close()
