@@ -6,7 +6,7 @@ def main():
     try:
         reader.start()
     except Exception as e:
-        print(e)
+        raise e
 
 
 if __name__ == "__main__":
