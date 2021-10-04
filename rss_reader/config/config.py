@@ -9,10 +9,12 @@ class Config:
     def __init__(self):
         self.source = None
         self.limit = None
+        self.json = None
 
     def load(self, args):
         self.source = args.source
         self.limit = args.limit
+        self.json = args.json
 
 
 _arg_parser = ArgParser()

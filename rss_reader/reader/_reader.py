@@ -1,3 +1,5 @@
+import json
+
 import requests
 
 from rss_reader.config import config
@@ -19,5 +21,10 @@ class Reader:
         rss_builder = RSSBuilder(dom, config.limit)
 
         feed = rss_builder.build_feed()
+
+        if config.json:
+            feed = feed.json()
+            parsed_json = json.loads(feed)
+            feed = json.dumps(parsed_json, indent=4)
 
         print(feed)
