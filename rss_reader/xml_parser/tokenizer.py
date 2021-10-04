@@ -39,16 +39,26 @@ class UnexpectedEndOfDocumentError(XMLError):
 class Tokenizer:
     def __init__(self, xml):
         self.xml_io = StringIO(xml)
-        self._cutoff_head()
+        self._skip_head()
         self.attributes = []
         self.token_type = TokenType.BOF
         self.text: str
-        self.has_end_tag: bool
+        self.has_end_tag: bool = False
         self.tag_name: str
 
-    def _cutoff_head(self):
+    def _skip_head(self):
         while _ := self._read_char() != ">":
             pass
+
+    def _skip_tag(self):
+        counter_left_bracket = 1
+        counter_right_bracket = 0
+        while counter_left_bracket != counter_right_bracket:
+            char = self._read_char()
+            if char == "<":
+                counter_left_bracket += 1
+            elif char == ">":
+                counter_right_bracket += 1
 
     def __iter__(self):
         return self
@@ -131,6 +141,11 @@ class Tokenizer:
         is_start_tag = True
 
         char = self._read_char()
+        if char == "!" or char == "?":
+            self._skip_tag()
+            self._parse_text()
+            return
+
         if char == "/":
             is_start_tag = False
             char = self._read_char()
@@ -190,11 +205,11 @@ class Tokenizer:
                 char = self._read_char(True)
 
             if char != "=":
-                raise InvalidAttributeError("invalid attribute")
+                raise InvalidAttributeError("invalid attribute" + str(self))
 
             char = self._read_char(True)
             if char != "'" and char != '"':
-                raise InvalidAttributeError("invalid attribute")
+                raise InvalidAttributeError("invalid attribute" + str(self))
 
             delimiter = char
 
@@ -209,3 +224,6 @@ class Tokenizer:
             self.attributes.append(Attribute(name=attr_name, value=attr_value))
 
         return False
+
+    def __str__(self):
+        return f"<{self.tag_name} {self.attributes} {self.has_end_tag}>{self.text}"
