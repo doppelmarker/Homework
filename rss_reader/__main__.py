@@ -1,8 +1,9 @@
+from config import config
 from reader import Reader
 
 
 def main():
-    reader = Reader()
+    reader = Reader(config)
     try:
         reader.start()
     except Exception as e:
