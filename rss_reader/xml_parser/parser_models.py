@@ -1,3 +1,4 @@
+import re
 from typing import Optional
 
 from pydantic import BaseModel
@@ -33,6 +34,15 @@ class Element(BaseModel):
                     return a
             except AttributeError:
                 pass
+
+    def find_links(self):
+        for child in self.children:
+            if re.match(r"http", child.text):
+                yield {"link" if child.tag_name is None else child.tag_name: child.text}
+            for attr in child.attributes:
+                if re.match(r"http", attr.value):
+                    yield {child.tag_name: attr.value}
+            yield from child.find_links()
 
     @property
     def next_text(self):

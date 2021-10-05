@@ -22,9 +22,15 @@ class RSSBuilder:
         for i, item in zip(num_gen(self.limit), items):
             item_data = {"id": i}
             for item_field in item_fields:
-                found_item = item.find(item_field)
-                if found_item:
-                    item_data[item_field] = found_item.next_text
+                if item_field == "links":
+                    links = dict()
+                    for link in item.find_links():
+                        links.update(link)
+                    item_data[item_field] = links
+                else:
+                    found_item = item.find(item_field)
+                    if found_item:
+                        item_data[item_field] = found_item.next_text
             rss_items.append(Item(**item_data))
 
         feed_data = {
