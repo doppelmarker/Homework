@@ -2,7 +2,7 @@ from rss_reader.rss_builder.rss_models import Feed, Item
 
 
 class RSSBuilder:
-    def __init__(self, dom, limit=-1):
+    def __init__(self, dom, limit=-2):
         self.dom = dom
         self.limit = limit
 
@@ -15,7 +15,7 @@ class RSSBuilder:
 
         def num_gen(limit):
             i = 1
-            while i != limit:
+            while i != limit + 1:
                 yield i
                 i += 1
 
