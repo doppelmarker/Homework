@@ -2,7 +2,7 @@ from rss_reader.rss_builder.rss_models import Feed, Item
 
 
 class RSSBuilder:
-    def __init__(self, dom, limit=-2):
+    def __init__(self, dom, limit):
         self.dom = dom
         self.limit = limit
 

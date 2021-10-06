@@ -11,7 +11,10 @@ class ArgParser:
             "--version", help="Print version info", action="version", version="0.1.0"
         )
         self.parser.add_argument(
-            "--limit", help="Limit news topics if this parameter provided", type=int
+            "--limit",
+            help="Limit news topics if this parameter provided",
+            type=int,
+            default=-2,
         )
         self.parser.add_argument(
             "--json", help="Print result as JSON in stdout", action="store_true"
