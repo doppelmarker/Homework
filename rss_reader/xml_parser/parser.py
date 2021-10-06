@@ -1,6 +1,9 @@
+import logging
 from collections import deque
 
 from rss_reader.xml_parser.tokenizer import Tokenizer, TokenType
+
+logger = logging.getLogger("rss-reader")
 
 
 class Parser:
@@ -11,6 +14,8 @@ class Parser:
         tokenizer = Tokenizer(self.xml)
         try:
             elementStack = deque()
+
+            logger.info("Start parsing RSS...")
 
             for token in tokenizer:
                 if tokenizer.token_type == TokenType.START_TAG:
@@ -25,6 +30,8 @@ class Parser:
                     if not tokenizer.text.isspace():
                         elementStack[-1].children.append(token)
                         token.parent = elementStack[-1]
+
+            logger.info("Successfully parsed RSS document!")
 
             return elementStack.pop()
         finally:
