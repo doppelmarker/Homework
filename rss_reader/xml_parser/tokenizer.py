@@ -16,6 +16,10 @@ class XMLError(Exception):
     pass
 
 
+class EmptyXMLDocumentError(XMLError):
+    pass
+
+
 class InvalidTagError(XMLError):
     pass
 
@@ -38,6 +42,8 @@ class UnexpectedEndOfDocumentError(XMLError):
 
 class Tokenizer:
     def __init__(self, xml):
+        if len(xml) == 0:
+            raise EmptyXMLDocumentError("empty xml document")
         self.xml_io = StringIO(xml)
         self._skip_head()
         self.attributes = []
@@ -205,11 +211,11 @@ class Tokenizer:
                 char = self._read_char(True)
 
             if char != "=":
-                raise InvalidAttributeError("invalid attribute" + str(self))
+                raise InvalidAttributeError("invalid attribute")
 
             char = self._read_char(True)
             if char != "'" and char != '"':
-                raise InvalidAttributeError("invalid attribute" + str(self))
+                raise InvalidAttributeError("invalid attribute")
 
             delimiter = char
 
@@ -224,6 +230,3 @@ class Tokenizer:
             self.attributes.append(Attribute(name=attr_name, value=attr_value))
 
         return False
-
-    def __str__(self):
-        return f"<{self.tag_name} {self.attributes} {self.has_end_tag}>{self.text}"

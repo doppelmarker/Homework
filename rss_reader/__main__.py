@@ -1,5 +1,9 @@
+import logging
+
 from config import config
 from reader import Reader
+
+logger = logging.getLogger("rss-reader")
 
 
 def main():
@@ -7,7 +11,8 @@ def main():
     try:
         reader.start()
     except Exception as e:
-        raise e
+        logger.exception(e)
+        print(f"Rss reader crashed from {type(e).__name__}")
 
 
 if __name__ == "__main__":

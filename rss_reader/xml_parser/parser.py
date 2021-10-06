@@ -1,10 +1,9 @@
+import logging
 from collections import deque
 
 from rss_reader.xml_parser.tokenizer import Tokenizer, TokenType, XMLError
 
-
-class EmptyXMLDocumentError(XMLError):
-    pass
+logger = logging.getLogger("rss-reader")
 
 
 class Parser:
@@ -30,11 +29,9 @@ class Parser:
                         elementStack[-1].children.append(token)
                         token.parent = elementStack[-1]
 
-            if len(elementStack) != 0:
-                return elementStack.pop()
-            else:
-                raise EmptyXMLDocumentError("empty xml document")
+            return elementStack.pop()
         except XMLError as e:
-            print(e)
+            logger.error(e)
+            raise e
         finally:
             tokenizer.xml_io.close()
