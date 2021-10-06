@@ -10,11 +10,13 @@ class Config:
         self.source = None
         self.limit = None
         self.json = None
+        self.verbose = None
 
     def load(self, args):
         self.source = args.source
         self.limit = args.limit
         self.json = args.json
+        self.verbose = args.verbose
 
 
 _arg_parser = ArgParser()

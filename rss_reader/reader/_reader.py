@@ -14,8 +14,25 @@ class Reader:
     def __init__(self, config):
         self.config = config
 
+    def _setup(self):
+        if self.config.verbose:
+            formatter = logging.Formatter(
+                "[%(levelname)s] %(asctime)s (%(funcName)s) = %(message)s"
+            )
+            logger_ = logging.getLogger("rss-reader")
+            logger_.setLevel("DEBUG")
+            s_handler = logging.StreamHandler()
+            s_handler.setFormatter(formatter)
+            logger_.addHandler(s_handler)
+            logger_.info("Enabled verbose mode")
+        else:
+            logger.addHandler(logging.NullHandler())
+            logger.propagate = False
+
     def start(self):
         try:
+            self._setup()
+
             response = get(self.config.source, timeout=5)
 
             parser = Parser(response.text)
