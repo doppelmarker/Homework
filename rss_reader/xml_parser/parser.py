@@ -30,8 +30,5 @@ class Parser:
                         token.parent = elementStack[-1]
 
             return elementStack.pop()
-        except XMLError as e:
-            logger.error(e)
-            raise e
         finally:
             tokenizer.xml_io.close()
