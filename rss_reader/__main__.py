@@ -1,7 +1,7 @@
 import logging
 
-from config import config
-from reader import Reader
+from rss_reader.config import config
+from rss_reader.reader import Reader
 
 logger = logging.getLogger("rss-reader")
 

@@ -8,7 +8,7 @@ class ArgParser:
         )
         self.parser.add_argument("source", help="RSS URL", type=str)
         self.parser.add_argument(
-            "--version", help="Print version info", action="version", version="0.1.0"
+            "--version", help="Print version info", action="version", version="1.0.0"
         )
         self.parser.add_argument(
             "--limit",
