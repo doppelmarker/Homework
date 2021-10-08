@@ -1,8 +1,8 @@
-import json
 import logging
 
 from requests import exceptions, get
 
+from rss_reader.convert import to_json
 from rss_reader.reader._caching import NewsCache
 from rss_reader.rss_builder import RSSBuilder
 from rss_reader.xml_parser import Parser
@@ -43,7 +43,7 @@ class Reader:
                 for news in cache.get_cached_news(
                     self.config.cached, self.config.source, self.config.limit
                 ):
-                    print(news)
+                    print(to_json(news) if self.config.json else news)
                 raise RestoredFromCache
 
             response = get(self.config.source, timeout=5)
@@ -58,12 +58,7 @@ class Reader:
 
             cache.cache_news(feed)
 
-            if self.config.json:
-                feed = feed.json()
-                parsed_json = json.loads(feed)
-                feed = json.dumps(parsed_json, indent=4)
-
-            print(feed)
+            print(to_json(feed) if self.config.json else feed)
 
         except (exceptions.ConnectionError, exceptions.Timeout) as e:
             logger.warning("Connection problems")
