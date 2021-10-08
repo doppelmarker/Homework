@@ -50,7 +50,7 @@ class NewsCache:
         else:
             raise FileNotFoundError("Cache file not found")
 
-    def get_cached_news(self, date, source):
+    def get_cached_news(self, date, source, limit):
         if self.cache_file_path.is_file():
             with open(self.cache_file_path, "r") as cache_file:
                 if json_content := cache_file.read():
@@ -58,19 +58,27 @@ class NewsCache:
 
                     items = list()
 
+                    class LimitAchieved(Exception):
+                        """Helper exception to determine whether the limit of news is achieved."""
+
                     def append_items(src):
                         for item in json_dict[src]:
                             datetime_obj = self._get_datetime_obj(item["pubDate"])
                             parsed_date = f"{datetime_obj.year}{datetime_obj.month:02d}{datetime_obj.day:02d}"
                             if parsed_date == date:
                                 items.append(Item(**item))
+                                if len(items) == limit:
+                                    raise LimitAchieved
 
-                    if source:
-                        if source in json_dict.keys():
-                            append_items(source)
-                    else:
-                        for source in json_dict.keys():
-                            append_items(source)
+                    try:
+                        if source:
+                            if source in json_dict.keys():
+                                append_items(source)
+                        else:
+                            for source in json_dict.keys():
+                                append_items(source)
+                    except LimitAchieved:
+                        return items
 
                     if len(items) == 0:
                         raise NewsNotFoundError(
