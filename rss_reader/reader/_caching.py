@@ -50,7 +50,7 @@ class NewsCache:
         else:
             raise FileNotFoundError("Cache file not found")
 
-    def get_cached_news(self, date, source, limit):
+    def get_cached_news(self, date, limit):
         if self.cache_file_path.is_file():
             with open(self.cache_file_path, "r") as cache_file:
                 if json_content := cache_file.read():
@@ -71,9 +71,9 @@ class NewsCache:
                                     raise LimitAchieved
 
                     try:
-                        if source:
-                            if source in json_dict.keys():
-                                append_items(source)
+                        if self.source:
+                            if self.source in json_dict.keys():
+                                append_items(self.source)
                         else:
                             for source in json_dict.keys():
                                 append_items(source)

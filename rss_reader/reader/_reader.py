@@ -41,7 +41,7 @@ class Reader:
 
             if self.config.cached:
                 for news in cache.get_cached_news(
-                    self.config.cached, self.config.source, self.config.limit
+                    self.config.cached, self.config.limit
                 ):
                     print(to_json(news) if self.config.json else news)
                 raise RestoredFromCache
