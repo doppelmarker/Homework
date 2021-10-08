@@ -6,9 +6,9 @@ class ArgParser:
         self.parser = argparse.ArgumentParser(
             description="Pure Python command-line RSS reader."
         )
-        self.parser.add_argument("source", help="RSS URL", type=str)
+        self.parser.add_argument("source", nargs="?", default=None, help="RSS URL")
         self.parser.add_argument(
-            "--version", help="Print version info", action="version", version="1.0.0"
+            "--version", help="Print version info", action="version", version="2.0.0"
         )
         self.parser.add_argument(
             "--limit",
@@ -21,6 +21,9 @@ class ArgParser:
         )
         self.parser.add_argument(
             "--verbose", help="Output verbose status messages", action="store_true"
+        )
+        self.parser.add_argument(
+            "--date", help="Print news published on a specific date", type=str
         )
 
     @property

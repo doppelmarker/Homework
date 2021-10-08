@@ -1,1 +1,2 @@
-from ._reader import Reader
+from ._caching import NewsNotFoundError
+from ._reader import Reader, RestoredFromCache
