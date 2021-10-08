@@ -13,13 +13,13 @@ class RSSBuilder:
 
         rss_items = []
 
-        def num_gen(limit):
+        def limitation_gen(limit):
             i = 1
             while i != limit + 1:
                 yield i
                 i += 1
 
-        for i, item in zip(num_gen(self.limit), items):
+        for i, item in zip(limitation_gen(self.limit), items):
             item_data = {"id": i}
             for item_field in item_fields:
                 if item_field == "links":
