@@ -46,9 +46,9 @@ class Reader:
                     print(to_json(news) if self.config.json else news)
                 raise RestoredFromCache
 
-            response = get(self.config.source, timeout=5)
+            rss_webpage = get(self.config.source, timeout=5)
 
-            parser = Parser(response.text)
+            parser = Parser(rss_webpage.text)
 
             dom = parser.parse()
 
