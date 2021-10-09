@@ -12,6 +12,7 @@ class NewsCache:
     valid_date_formats = [
         # RFC 822 date format (standard for RSS)
         "%a, %d %b %Y %H:%M:%S %z",
+        "%a, %d %b %Y %H:%M:%S %Z",
         "%Y-%m-%dT%H:%M:%SZ",
     ]
 
