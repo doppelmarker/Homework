@@ -1,4 +1,5 @@
 import logging
+from html import unescape
 
 from requests import exceptions, get
 
@@ -48,7 +49,7 @@ class Reader:
 
             rss_webpage = get(self.config.source, timeout=5)
 
-            parser = Parser(rss_webpage.text)
+            parser = Parser(unescape(rss_webpage.text))
 
             dom = parser.parse()
 
