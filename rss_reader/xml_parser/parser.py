@@ -26,7 +26,10 @@ class Parser:
                 elif tokenizer.token_type == TokenType.END_TAG:
                     if len(elementStack) > 1:
                         elementStack.pop()
-                elif tokenizer.token_type == TokenType.TEXT:
+                elif (
+                    tokenizer.token_type == TokenType.TEXT
+                    or tokenizer.token_type == TokenType.CDATA
+                ):
                     if not tokenizer.text.isspace():
                         elementStack[-1].children.append(token)
                         token.parent = elementStack[-1]

@@ -10,6 +10,7 @@ class TokenType(Enum):
     END_TAG = 3
     TEXT = 4
     EOF = 5
+    CDATA = 6
 
 
 class XMLError(Exception):
@@ -56,15 +57,33 @@ class Tokenizer:
         while _ := self._read_char() != ">":
             pass
 
-    def _skip_tag(self):
-        counter_left_bracket = 1
-        counter_right_bracket = 0
+    def _parse_cdata(self):
+        cdata = "<!"
+        counter_left_bracket, counter_right_bracket = 1, 0
         while counter_left_bracket != counter_right_bracket:
             char = self._read_char()
+            cdata += char
             if char == "<":
                 counter_left_bracket += 1
             elif char == ">":
                 counter_right_bracket += 1
+
+        cdata_html = cdata.removeprefix("<![CDATA[").removesuffix("]]>").strip()
+        text = ""
+        i = 0
+        while i < len(cdata_html):
+            if cdata_html[i] == "<":
+                while cdata_html[i] != ">":
+                    i += 1
+                i += 1
+            else:
+                while cdata_html[i] != "<":
+                    text += cdata_html[i]
+                    i += 1
+                text += " "
+
+        self.token_type = TokenType.CDATA
+        self.text = text
 
     def __iter__(self):
         return self
@@ -77,7 +96,7 @@ class Tokenizer:
             )
         elif self.token_type == TokenType.END_TAG:
             return Element(tag_name=self.tag_name)
-        elif self.token_type == TokenType.TEXT:
+        elif self.token_type == TokenType.TEXT or self.token_type == TokenType.CDATA:
             return Element(text=self.text)
         elif self.token_type == TokenType.EOF:
             raise StopIteration
@@ -103,6 +122,8 @@ class Tokenizer:
         elif self.token_type == TokenType.TEXT:
             self._reset(True)
             self._parse_tag()
+        elif self.token_type == TokenType.CDATA:
+            self._parse_text()
         elif self.token_type == TokenType.EOF:
             pass
 
@@ -147,9 +168,8 @@ class Tokenizer:
         is_start_tag = True
 
         char = self._read_char()
-        if char == "!" or char == "?":
-            self._skip_tag()
-            self._parse_text()
+        if char == "!":
+            self._parse_cdata()
             return
 
         if char == "/":
