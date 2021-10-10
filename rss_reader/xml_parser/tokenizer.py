@@ -77,9 +77,13 @@ class Tokenizer:
                     i += 1
                 i += 1
             else:
-                while cdata_html[i] != "<":
-                    text += cdata_html[i]
-                    i += 1
+                try:
+                    while cdata_html[i] != "<":
+                        text += cdata_html[i]
+                        i += 1
+                except IndexError:
+                    # if cdata content doesn't have '<' and '>'
+                    pass
                 text += " "
 
         self.token_type = TokenType.CDATA
