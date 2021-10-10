@@ -47,7 +47,7 @@ class NewsCache:
                     else:
                         json_dict[self.source] = list()
                         json_dict[self.source].append(item.dict())
-                cache_file.write(json.dumps(json_dict, indent=4))
+                cache_file.write(json.dumps(json_dict, indent=4, ensure_ascii=False))
         else:
             raise FileNotFoundError("Cache file not found")
 
