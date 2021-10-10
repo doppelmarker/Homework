@@ -39,7 +39,9 @@ class Feed(BaseModel):
     title: str
     description: str
     link: str
-    items: list[Item]
+    image: Optional[str]
+    language: Optional[str]
+    items: Optional[list[Item]]
 
     def __str__(self):
         return (

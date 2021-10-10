@@ -1,4 +1,6 @@
-from rss_reader.rss_builder.rss_models import Feed, Item
+from collections import ChainMap
+
+from rss_reader.rss_builder.rss_models import Feed
 
 
 class RSSBuilder:
@@ -6,38 +8,41 @@ class RSSBuilder:
         self.dom = dom
         self.limit = limit
 
+    @staticmethod
+    def _get_element_text(element, tag_name):
+        try:
+            return element.find(tag_name).next_text
+        except AttributeError:
+            return ""
+
     def build_feed(self) -> Feed:
         items = self.dom.find_all("item")
 
-        item_fields = Item.__fields__.keys()
-
-        rss_items = []
-
         def limitation_gen(limit):
+            """Helper generator function to yield limited amount of items."""
             i = 1
             while i != limit + 1:
                 yield i
                 i += 1
 
-        for i, item in zip(limitation_gen(self.limit), items):
-            item_data = {"id": i}
-            for item_field in item_fields:
-                if item_field == "links":
-                    links = dict()
-                    for link in item.find_links():
-                        links.update(link)
-                    item_data[item_field] = links
-                else:
-                    found_item = item.find(item_field)
-                    if found_item:
-                        item_data[item_field] = found_item.next_text
-            rss_items.append(Item(**item_data))
-
         feed_data = {
-            "title": self.dom.find("title").next_text,
-            "description": self.dom.find("description").next_text,
-            "link": self.dom.find("link").next_text,
-            "items": rss_items,
+            "title": self._get_element_text(self.dom, "title"),
+            "description": self._get_element_text(self.dom, "description"),
+            "link": self._get_element_text(self.dom, "link"),
+            "image": self._get_element_text(self.dom.find("image"), "url"),
+            "language": self._get_element_text(self.dom, "language"),
+            "items": [
+                {
+                    "id": i,
+                    "title": self._get_element_text(item, "title"),
+                    "description": self._get_element_text(item, "description"),
+                    "link": self._get_element_text(item, "link"),
+                    "author": self._get_element_text(item, "author"),
+                    "pubDate": self._get_element_text(item, "pubDate"),
+                    "links": dict(ChainMap(*item.find_links())),
+                }
+                for i, item in zip(limitation_gen(self.limit), items)
+            ],
         }
 
         return Feed(**feed_data)
