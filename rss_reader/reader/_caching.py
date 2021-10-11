@@ -1,3 +1,4 @@
+import codecs
 import json
 from datetime import datetime
 
@@ -33,7 +34,7 @@ class NewsCache:
 
     def cache_news(self, feed):
         if self.cache_file_path.is_file():
-            with open(self.cache_file_path, "r+") as cache_file:
+            with open(self.cache_file_path, "r+", encoding="utf-8") as cache_file:
                 json_content = cache_file.read()
                 json_dict = json.loads(json_content) if json_content else dict()
                 cache_file.seek(0)
@@ -47,7 +48,7 @@ class NewsCache:
                     else:
                         json_dict[self.source] = list()
                         json_dict[self.source].append(item.dict())
-                cache_file.write(json.dumps(json_dict, indent=4, ensure_ascii=False))
+                json.dump(json_dict, cache_file, indent=4, ensure_ascii=False)
         else:
             raise FileNotFoundError("Cache file not found")
 
