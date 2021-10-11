@@ -10,32 +10,36 @@ class Parser:
     def __init__(self, xml):
         self.xml = xml
 
-    def parse(self):
-        tokenizer = Tokenizer(self.xml)
+    def _tokenize(self, tokenizer, stack):
         try:
-            elementStack = deque()
-
-            logger.info("Start parsing RSS...")
-
             for token in tokenizer:
                 if tokenizer.token_type == TokenType.START_TAG:
-                    if len(elementStack) != 0:
-                        elementStack[-1].children.append(token)
-                        token.parent = elementStack[-1]
-                    elementStack.append(token)
+                    if len(stack) != 0:
+                        stack[-1].children.append(token)
+                        token.parent = stack[-1]
+                    stack.append(token)
                 elif tokenizer.token_type == TokenType.END_TAG:
-                    if len(elementStack) > 1:
-                        elementStack.pop()
-                elif (
-                    tokenizer.token_type == TokenType.TEXT
-                    or tokenizer.token_type == TokenType.CDATA
-                ):
+                    if len(stack) > 1:
+                        while stack.pop().tag_name != token.tag_name:
+                            pass
+                elif tokenizer.token_type == TokenType.TEXT:
                     if not tokenizer.text.isspace():
-                        elementStack[-1].children.append(token)
-                        token.parent = elementStack[-1]
-
-            logger.info("Successfully parsed RSS document!")
-
-            return elementStack.pop()
+                        stack[-1].children.append(token)
+                        token.parent = stack[-1]
+                elif tokenizer.token_type == TokenType.CDATA:
+                    self._tokenize(tokenizer.cdata_tokenizer, stack)
         finally:
             tokenizer.xml_io.close()
+
+    def parse(self):
+        tokenizer = Tokenizer(self.xml)
+
+        element_stack = deque()
+
+        logger.info("Start parsing RSS...")
+
+        self._tokenize(tokenizer, element_stack)
+
+        logger.info("Successfully parsed RSS document!")
+
+        return element_stack.pop()

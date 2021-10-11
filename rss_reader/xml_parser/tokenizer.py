@@ -54,8 +54,12 @@ class Tokenizer:
         self.tag_name: str
 
     def _skip_head(self):
-        while _ := self._read_char() != ">":
-            pass
+        begin = self.xml_io.read(2)[-1]
+        if begin == "!" or begin == "?":
+            while _ := self._read_char() != ">":
+                pass
+        else:
+            self.xml_io.seek(0)
 
     def _parse_cdata(self):
         cdata = "<!"
@@ -69,25 +73,8 @@ class Tokenizer:
                 counter_right_bracket += 1
 
         cdata_html = cdata.removeprefix("<![CDATA[").removesuffix("]]>").strip()
-        text = ""
-        i = 0
-        while i < len(cdata_html):
-            if cdata_html[i] == "<":
-                while cdata_html[i] != ">":
-                    i += 1
-                i += 1
-            else:
-                try:
-                    while cdata_html[i] != "<":
-                        text += cdata_html[i]
-                        i += 1
-                except IndexError:
-                    # if cdata content doesn't have '<' and '>'
-                    pass
-                text += " "
-
+        self.cdata_tokenizer = Tokenizer(cdata_html)
         self.token_type = TokenType.CDATA
-        self.text = text
 
     def __iter__(self):
         return self
