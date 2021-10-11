@@ -11,7 +11,7 @@ class RSSBuilder:
     @staticmethod
     def _get_element_text(element, tag_name):
         try:
-            return element.find(tag_name).next_text
+            return " ".join(part for part in element.find(tag_name).find_text() if part)
         except AttributeError:
             return ""
 

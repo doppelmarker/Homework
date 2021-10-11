@@ -44,9 +44,14 @@ class Element(BaseModel):
                     yield {child.tag_name: attr.value}
             yield from child.find_links()
 
-    @property
-    def next_text(self):
-        return self.find(None).text
+    def find_text(self):
+        for child in self.children:
+            if not child.tag_name:
+                yield child.text.strip()
+            yield from child.find_text()
 
     def __str__(self):
+        return f"<{self.tag_name}>"
+
+    def __repr__(self):
         return f"<{self.tag_name}>"
