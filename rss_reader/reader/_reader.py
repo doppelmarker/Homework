@@ -41,10 +41,10 @@ class Reader:
             cache = NewsCache(self.config.cache_file_path, self.config.source)
 
             if self.config.cached:
-                for news in cache.get_cached_news(
+                for feed in cache.get_cached_news(
                     self.config.cached, self.config.limit
                 ):
-                    print(to_json(news) if self.config.json else news)
+                    print(to_json(feed) if self.config.json else feed)
                 raise RestoredFromCache
 
             rss_webpage = get(self.config.source, timeout=5)
