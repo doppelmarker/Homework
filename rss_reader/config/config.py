@@ -17,6 +17,7 @@ class Config:
         self.json = None
         self.verbose = None
         self.cached = None
+        self.format = {}
 
     def load_cli(self, args):
         self.source = args.source
@@ -24,6 +25,10 @@ class Config:
         self.json = args.json
         self.verbose = args.verbose
         self.cached = args.date
+        if args.to_html:
+            self.format.update(html=args.to_html)
+        if args.to_pdf:
+            self.format.update(pdf=args.to_pdf)
 
 
 _arg_parser = ArgParser()

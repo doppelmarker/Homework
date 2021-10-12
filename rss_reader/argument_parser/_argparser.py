@@ -25,6 +25,18 @@ class ArgParser:
         self.parser.add_argument(
             "--date", help="Print news published on a specific date", type=str
         )
+        self.parser.add_argument(
+            "--to-html",
+            type=str,
+            help="Convert news to .html format and save them by the specified path",
+            metavar="PATH",
+        )
+        self.parser.add_argument(
+            "--to-pdf",
+            type=str,
+            help="Convert news to .pdf format and save them by the specified path",
+            metavar="PATH",
+        )
 
     @property
     def args(self):

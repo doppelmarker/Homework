@@ -3,8 +3,9 @@ from html import unescape
 
 from requests import exceptions, get
 
-from rss_reader.convert import to_json
-from rss_reader.reader._caching import NewsCache
+from rss_reader.convert import Converter
+from rss_reader.printer import NewsPrinter
+from rss_reader.reader import NewsCache
 from rss_reader.rss_builder import RSSBuilder
 from rss_reader.xml_parser import Parser
 from rss_reader.xml_parser.tokenizer import XMLError
@@ -35,18 +36,11 @@ class Reader:
             logger.addHandler(logging.NullHandler())
             logger.propagate = False
 
-    def start(self):
+    def _get_cached(self, cache):
+        return cache.get_cached_news(self.config.cached, self.config.limit)
+
+    def _get_parsed(self, cache):
         try:
-            self._setup()
-            cache = NewsCache(self.config.cache_file_path, self.config.source)
-
-            if self.config.cached:
-                for feed in cache.get_cached_news(
-                    self.config.cached, self.config.limit
-                ):
-                    print(to_json(feed) if self.config.json else feed)
-                raise RestoredFromCache
-
             rss_webpage = get(self.config.source, timeout=5)
 
             parser = Parser(unescape(rss_webpage.text))
@@ -59,8 +53,7 @@ class Reader:
 
             cache.cache_news(feed)
 
-            print(to_json(feed) if self.config.json else feed)
-
+            return feed
         except (exceptions.ConnectionError, exceptions.Timeout) as e:
             logger.warning("Connection problems")
             raise e
@@ -70,3 +63,24 @@ class Reader:
         except XMLError as e:
             logger.warning(e)
             raise e
+
+    def start(self):
+        self._setup()
+
+        cache = NewsCache(self.config.cache_file_path, self.config.source)
+
+        feeds = []
+
+        if self.config.cached:
+            feeds.extend(self._get_cached(cache))
+        else:
+            feeds.append(self._get_parsed(cache))
+
+        converter = Converter(self.config.format) if self.config.format else None
+
+        printer = NewsPrinter(converter, self.config.json)
+
+        printer.print(feeds)
+
+        if self.config.cached:
+            raise RestoredFromCache

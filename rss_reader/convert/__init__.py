@@ -1,1 +1,1 @@
-from ._convert import to_json
+from ._convert import Converter, to_json

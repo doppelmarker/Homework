@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>News</title>
+    <style>
+        header {
+            padding: 2rem;
+        }
+
+        .items {
+            padding: 1rem;
+        }
+
+        .item {
+            padding-bottom: 1rem;
+        }
+
+        .description_image {
+            max-width: 240px;
+        }
+    </style>
+</head>
+<body>
+<main>
+    {% for feed in feeds %}
+        <div lang={{ feed.language }}>
+            <h1 class="feed_title">{{ feed.title }}</h1>
+            <h2>{{ feed.description }}</h2>
+            <section class="items">
+                {% for item in feed.items %}
+                    <article class="item">
+                        {% if item.title %}
+                            <h3 class="item_title">{{ item.title }}</h3>
+                        {% endif %}
+                        {% if item.pubDate %}
+                            <p class="publish_date">{{ item.pubDate }}</p>
+                        {% endif %}
+                        {% if item.link %}
+                            <a href="{{ item.link }}">{{ item.link }}</a>
+                        {% endif %}
+                        <div class="description">
+                            <p class="description_text">{{ item.description }}</p>
+                            <ul>
+                                {% for link in item.links.items() %}
+                                    <li class="description_link">{{ link[1] }}({{ link[0] }})</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </article>
+                {% endfor %}
+            </section>
+        </div>
+    {% endfor %}
+</main>
+</body>
+</html>

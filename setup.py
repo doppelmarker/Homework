@@ -15,6 +15,7 @@ setup(
     install_requires=[
         "requests",
         "pydantic",
+        "Jinja2",
     ],
     entry_points={
         "console_scripts": ["markedrss=rss_reader.__main__:main"],
