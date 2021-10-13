@@ -18,25 +18,31 @@ class NewsPrinter:
                 print(to_json(feed))
         else:
             for feed in feeds:
-                print(f"Feed: {feed.title}\n{feed.description}\nLink: {feed.link}")
+                print(
+                    f"Feed: {feed.title}\n\n{feed.description}\n\nLink: {feed.link}\n"
+                )
                 if feed.image:
                     print(f"Image: {feed.image}\n")
                 for item in feed.items:
-                    print(f"Item {item.id}:\n   ", end="")
+                    print(f"Item {item.id}:", end="\n\n   ")
                     if item.title:
-                        print(f"Title: {item.title}\n   ", end="")
+                        print(f"Title: {item.title}", end="\n\n   ")
                     if item.description:
-                        print(f"{item.description}\n   ", end="")
+                        print(f"{item.description}", end="\n\n   ")
                     if item.link:
-                        print(f"Link: {item.link}\n   ", end="")
+                        print(f"Link: {item.link}", end="\n\n   ")
                     if item.author:
-                        print(f"Author: {item.author}\n   ", end="")
+                        print(f"Author: {item.author}", end="\n\n   ")
                     if item.pubDate:
-                        print(f"Publication date: {item.pubDate}\n   ", end="")
+                        print(f"Publication date: {item.pubDate}", end="\n\n   ")
                     if item.links:
-                        print(f"All links:\n      ", end="")
-                        for i, link in enumerate(item.links.items(), start=1):
-                            print(f"[{i}]: {link[1]} ({link[0]})\n      ", end="")
+                        print(f"Links:", end="\n")
+                        for name, named_links in item.links.items():
+                            if named_links:
+                                print(f"      {name}:\n         ", end="")
+                            for i, link in enumerate(named_links, start=1):
+                                print(f"[{i}]: {link}\n         ", end="")
+                            print()
                     print()
 
     def print(self, feeds: List[Feed]):

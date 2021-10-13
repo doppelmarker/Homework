@@ -1,5 +1,3 @@
-from collections import ChainMap
-
 from rss_reader.rss_builder.rss_models import Feed
 
 
@@ -39,7 +37,29 @@ class RSSBuilder:
                     "link": self._get_element_text(item, "link"),
                     "author": self._get_element_text(item, "author"),
                     "pubDate": self._get_element_text(item, "pubDate"),
-                    "links": dict(ChainMap(*item.find_links())),
+                    "links": {
+                        "images": list(
+                            set(
+                                link[1]
+                                for link in item.find_links()
+                                if link[0] == "image"
+                            )
+                        ),
+                        "audios": list(
+                            set(
+                                link[1]
+                                for link in item.find_links()
+                                if link[0] == "audio"
+                            )
+                        ),
+                        "others": list(
+                            set(
+                                link[1]
+                                for link in item.find_links()
+                                if link[0] == "other"
+                            )
+                        ),
+                    },
                 }
                 for i, item in zip(limitation_gen(self.limit), items)
             ],

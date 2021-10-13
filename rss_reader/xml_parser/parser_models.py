@@ -1,5 +1,6 @@
 import re
 from typing import Optional
+from urllib.parse import urljoin, urlparse
 
 from pydantic import BaseModel
 
@@ -35,13 +36,25 @@ class Element(BaseModel):
             except AttributeError:
                 pass
 
+    @staticmethod
+    def _determine_link(link: str):
+        image_extensions = [".png", ".jpeg", ".jpg"]
+        audio_extensions = [".mp3"]
+        for image_extension in image_extensions:
+            if urlparse(link).path.endswith(image_extension):
+                return "image"
+        for audio_extension in audio_extensions:
+            if urlparse(link).path.endswith(audio_extension):
+                return "audio"
+        return "other"
+
     def find_links(self):
         for child in self.children:
             if re.match(r"http", child.text):
-                yield {"link" if child.tag_name is None else child.tag_name: child.text}
+                yield Element._determine_link(child.text), child.text
             for attr in child.attributes:
                 if re.match(r"http", attr.value):
-                    yield {child.tag_name: attr.value}
+                    yield Element._determine_link(attr.value), attr.value
             yield from child.find_links()
 
     def find_text(self):
