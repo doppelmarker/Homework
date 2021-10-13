@@ -40,9 +40,9 @@ class NewsPrinter:
                         for name, named_links in item.links.items():
                             if named_links:
                                 print(f"      {name}:\n         ", end="")
-                            for i, link in enumerate(named_links, start=1):
-                                print(f"[{i}]: {link}\n         ", end="")
-                            print()
+                                for i, link in enumerate(named_links, start=1):
+                                    print(f"[{i}]: {link}\n         ", end="")
+                                print()
                     print()
 
     def print(self, feeds: List[Feed]):

@@ -9,6 +9,23 @@
             padding: 2rem;
         }
 
+        .container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            padding: 5px;
+        }
+
+        .feed_image {
+            margin: 5px;
+            max-width: 250px;
+            max-height: 250px;
+        }
+
+        .feed_title {
+            margin: 10px;
+        }
+
         .items {
             padding: 1rem;
         }
@@ -16,17 +33,17 @@
         .item {
             padding-bottom: 1rem;
         }
-
-        .description_image {
-            max-width: 240px;
-        }
     </style>
 </head>
 <body>
 <main>
     {% for feed in feeds %}
         <div lang={{ feed.language }}>
-            <h1 class="feed_title">{{ feed.title }}</h1>
+            <div class="container">
+                <img class="feed_image" src={{ feed.image }} alt="feed_image"/>
+                <h1 class="feed_title">{{ feed.title }}</h1>
+            </div>
+
             <h2>{{ feed.description }}</h2>
             <section class="items">
                 {% for item in feed.items %}
@@ -42,11 +59,28 @@
                         {% endif %}
                         <div class="description">
                             <p class="description_text">{{ item.description }}</p>
-                            <ul>
-                                {% for link in item.links.items() %}
-                                    <li class="description_link">{{ link[1] }}({{ link[0] }})</li>
-                                {% endfor %}
-                            </ul>
+                            {% for link_type in item.links.keys() %}
+                                {% if link_type == "images" and item.links[link_type] %}
+                                    <p>Images:</p>
+                                    <div class="container">
+                                        {% for link in item.links[link_type] %}
+                                            <img class="feed_image" src={{ link }} alt="feed_image"/>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                {% if link_type == "audios" and item.links[link_type] %}
+                                    <ul>Audios:</ul>
+                                    {% for link in item.links[link_type] %}
+                                        <li>{{ link }}</li>
+                                    {% endfor %}
+                                {% endif %}
+                                {% if link_type == "others" and item.links[link_type] %}
+                                    <ul>Other links:</ul>
+                                    {% for link in item.links[link_type] %}
+                                        <li>{{ link }}</li>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endfor %}
                         </div>
                     </article>
                 {% endfor %}
