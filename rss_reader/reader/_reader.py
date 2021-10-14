@@ -17,24 +17,13 @@ class RestoredFromCache(Exception):
     pass
 
 
+class NotRSSError(Exception):
+    pass
+
+
 class Reader:
     def __init__(self, config):
         self.config = config
-
-    def _setup(self):
-        if self.config.verbose:
-            formatter = logging.Formatter(
-                "[%(levelname)s] %(asctime)s (%(funcName)s) = %(message)s"
-            )
-            logger_ = logging.getLogger("rss-reader")
-            logger_.setLevel("DEBUG")
-            s_handler = logging.StreamHandler()
-            s_handler.setFormatter(formatter)
-            logger_.addHandler(s_handler)
-            logger_.info("Enabled verbose mode")
-        else:
-            logger.addHandler(logging.NullHandler())
-            logger.propagate = False
 
     def _get_cached(self, cache):
         return cache.get_cached_news(self.config.cached, self.config.limit)
@@ -43,11 +32,14 @@ class Reader:
         try:
             rss_webpage = get(self.config.source, timeout=5)
 
+            if rss_webpage.headers["content-type"] != "application/xml":
+                raise NotRSSError(f"{self.config.source} is not an RSS!")
+
             parser = Parser(unescape(rss_webpage.text))
 
             dom = parser.parse()
 
-            rss_builder = RSSBuilder(dom, self.config.limit)
+            rss_builder = RSSBuilder(dom, self.config.limit, self.config.check_urls)
 
             feed = rss_builder.build_feed()
 
@@ -55,18 +47,16 @@ class Reader:
 
             return feed
         except (exceptions.ConnectionError, exceptions.Timeout) as e:
-            logger.warning("Connection problems")
+            logger.error("Connection problems")
             raise e
         except exceptions.RequestException as e:
-            logger.warning("Invalid source URL")
+            logger.error("Invalid source URL")
             raise e
         except XMLError as e:
-            logger.warning(e)
+            logger.error(e)
             raise e
 
     def start(self):
-        self._setup()
-
         cache = NewsCache(self.config.cache_file_path, self.config.source)
 
         feeds = []

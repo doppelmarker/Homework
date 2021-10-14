@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="markedrss",
-    version="2.9.9",
+    version="3.0.0",
     author="doppelmarker",
     author_email="doppelmarker@gmail.com",
     url="https://github.com/doppelmarker/Homework",
@@ -16,7 +16,11 @@ setup(
         "requests",
         "pydantic",
         "Jinja2",
+        "xhtml2pdf",
     ],
+    extras_require={
+        "aiohttp": ["aiohttp"],
+    },
     entry_points={
         "console_scripts": ["markedrss=rss_reader.__main__:main"],
     },

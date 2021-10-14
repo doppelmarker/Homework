@@ -1,10 +1,12 @@
 from rss_reader.rss_builder.rss_models import Feed
+from rss_reader.rss_builder.url_qualifier import URLQualifier
 
 
 class RSSBuilder:
-    def __init__(self, dom, limit):
+    def __init__(self, dom, limit, check_urls):
         self.dom = dom
         self.limit = limit
+        self.check_urls = check_urls
 
     @staticmethod
     def _get_element_text(element, tag_name):
@@ -14,8 +16,6 @@ class RSSBuilder:
             return ""
 
     def build_feed(self) -> Feed:
-        items = self.dom.find_all("item")
-
         def limitation_gen(limit):
             """Helper generator function to yield limited amount of items."""
             i = 1
@@ -23,46 +23,64 @@ class RSSBuilder:
                 yield i
                 i += 1
 
+        all_urls = {
+            i: set(item.find_urls())
+            for i, item in zip(limitation_gen(self.limit), self.dom.find_all("item"))
+        }
+
+        url_qualifier = URLQualifier(all_urls, self.check_urls)
+
+        determined_urls = url_qualifier.determine_urls()
+
+        feed_items = []
+
+        for i, item in zip(limitation_gen(self.limit), self.dom.find_all("item")):
+            feed_link = self._get_element_text(item, "link")
+
+            images = list(
+                map(
+                    lambda url: url[1],
+                    filter(lambda url: url[0] == i, determined_urls["image"]),
+                )
+            )
+            audios = list(
+                map(
+                    lambda url: url[1],
+                    filter(lambda url: url[0] == i, determined_urls["audio"]),
+                )
+            )
+            others = list(
+                map(
+                    lambda url: url[1],
+                    filter(
+                        lambda url: url[0] == i and url[1] != feed_link,
+                        determined_urls["other"],
+                    ),
+                )
+            )
+
+            feed_item = {
+                "id": i,
+                "title": self._get_element_text(item, "title"),
+                "description": self._get_element_text(item, "description"),
+                "link": feed_link,
+                "author": self._get_element_text(item, "author"),
+                "pubDate": self._get_element_text(item, "pubDate"),
+                "links": {
+                    "images": images,
+                    "audios": audios,
+                    "others": others,
+                },
+            }
+            feed_items.append(feed_item)
+
         feed_data = {
             "title": self._get_element_text(self.dom, "title"),
             "description": self._get_element_text(self.dom, "description"),
             "link": self._get_element_text(self.dom, "link"),
             "image": self._get_element_text(self.dom.find("image"), "url"),
             "language": self._get_element_text(self.dom, "language"),
-            "items": [
-                {
-                    "id": i,
-                    "title": self._get_element_text(item, "title"),
-                    "description": self._get_element_text(item, "description"),
-                    "link": self._get_element_text(item, "link"),
-                    "author": self._get_element_text(item, "author"),
-                    "pubDate": self._get_element_text(item, "pubDate"),
-                    "links": {
-                        "images": list(
-                            set(
-                                link[1]
-                                for link in item.find_links()
-                                if link[0] == "image"
-                            )
-                        ),
-                        "audios": list(
-                            set(
-                                link[1]
-                                for link in item.find_links()
-                                if link[0] == "audio"
-                            )
-                        ),
-                        "others": list(
-                            set(
-                                link[1]
-                                for link in item.find_links()
-                                if link[0] == "other"
-                            )
-                        ),
-                    },
-                }
-                for i, item in zip(limitation_gen(self.limit), items)
-            ],
+            "items": feed_items,
         }
 
         return Feed(**feed_data)

@@ -1,8 +1,10 @@
-import codecs
 import json
+import logging
 from datetime import datetime
 
 from rss_reader.rss_builder.rss_models import Feed, Item
+
+logger = logging.getLogger("rss-reader")
 
 
 class NewsNotFoundError(Exception):
@@ -36,8 +38,15 @@ class NewsCache:
         if self.cache_file_path.is_file():
             with open(self.cache_file_path, "r+", encoding="utf-8") as cache_file:
                 json_content = cache_file.read()
-                json_dict = json.loads(json_content) if json_content else dict()
+
                 cache_file.seek(0)
+
+                try:
+                    json_dict = json.loads(json_content) if json_content else dict()
+                except json.decoder.JSONDecodeError:
+                    logger.warning("Cache file is damaged! Clearing cache file...")
+                    cache_file.truncate(0)
+                    json_dict = dict()
 
                 feed_head = feed.dict(exclude={"items"})
                 if (
@@ -60,7 +69,14 @@ class NewsCache:
         if self.cache_file_path.is_file():
             with open(self.cache_file_path, "r", encoding="utf-8") as cache_file:
                 if json_content := cache_file.read():
-                    json_dict = json.loads(json_content)
+                    try:
+                        json_dict = json.loads(json_content)
+                    except json.decoder.JSONDecodeError:
+                        logger.warning("Cache file is damaged! Clearing cache file...")
+                        cache_file.truncate(0)
+                        raise NewsNotFoundError(
+                            "Cache file was damaged, that's why it was cleaned."
+                        )
 
                     feeds = list()
                     items_count = 0

@@ -1,7 +1,7 @@
 import logging
 from collections import deque
 
-from rss_reader.xml_parser.tokenizer import Tokenizer, TokenType
+from rss_reader.xml_parser.tokenizer import Tokenizer, TokenType, XMLError
 
 logger = logging.getLogger("rss-reader")
 
@@ -20,8 +20,12 @@ class Parser:
                     stack.append(token)
                 elif tokenizer.token_type == TokenType.END_TAG:
                     if len(stack) > 1:
-                        while stack.pop().tag_name != token.tag_name:
-                            pass
+                        try:
+                            while stack.pop().tag_name != token.tag_name:
+                                pass
+                        except IndexError:
+                            # issue with https://feedforall.com/sample.xml
+                            raise XMLError("invalid xml")
                 elif tokenizer.token_type == TokenType.TEXT:
                     if not tokenizer.text.isspace():
                         stack[-1].children.append(token)
