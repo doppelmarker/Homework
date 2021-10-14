@@ -41,7 +41,6 @@ class URLQualifier:
                     results["other"].append((i, url))
 
         if self.check_urls:
-            import aiohttp
 
             async def is_url_image_by_mime_type(session, url, results):
                 image_formats = ("image/png", "image/jpeg", "image/jpg")
@@ -49,7 +48,6 @@ class URLQualifier:
                 if resp.headers["content-type"] in image_formats:
                     results["other"].remove(url)
                     results["image"].append(url)
-                logger.info(f"Checked url with number: {url[0]}")
 
             async def determine_urls_images_by_mime_type(urls, results):
                 async with aiohttp.ClientSession() as session:
@@ -70,16 +68,18 @@ class URLQualifier:
                 )
             )
 
-            logger.info(f"There are {len(undefined_urls)} urls to check!")
-
             if platform.system() == "Windows":
                 asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
             try:
+                import aiohttp
+
+                logger.info(f"There are {len(undefined_urls)} urls to check!")
+
                 asyncio.run(determine_urls_images_by_mime_type(undefined_urls, results))
             except ModuleNotFoundError:
                 logger.warning(
-                    f"Consider installing extra dependency aiohttp to perform advanced url type resolving.\n"
+                    f"Consider installing extra dependency aiohttp to perform advanced url type resolving. "
                     f"Use: pip install markedrss[aiohttp]"
                 )
             except aiohttp.ClientError:

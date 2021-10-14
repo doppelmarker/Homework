@@ -36,10 +36,6 @@ class Config:
         self.check_urls = args.check_urls
 
     def setup(self):
-        if not self.source and not self.cached:
-            raise SourceAndCachedArgsNotPassedError(
-                "Neither source, nor --date args were passed"
-            )
         if self.verbose:
             formatter = logging.Formatter(
                 "[%(levelname)s] %(asctime)s (%(funcName)s) = %(message)s"
@@ -52,6 +48,10 @@ class Config:
         else:
             logger.addHandler(logging.NullHandler())
             logger.propagate = False
+        if not self.source and not self.cached:
+            raise SourceAndCachedArgsNotPassedError(
+                "Neither source, nor --date args were passed"
+            )
         if self.check_urls:
             logger.info("Enabled advanced url resolving mode.")
 
