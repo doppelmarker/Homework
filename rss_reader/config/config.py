@@ -7,10 +7,6 @@ from rss_reader.argument_parser import ArgParser
 logger = logging.getLogger("rss-reader")
 
 
-class SourceAndCachedArgsNotPassedError(Exception):
-    pass
-
-
 class Config:
     def __init__(self, reader_dir_path, cache_file_path):
         self.reader_dir_path = reader_dir_path
@@ -35,7 +31,7 @@ class Config:
             self.format.update(pdf=args.to_pdf)
         self.check_urls = args.check_urls
 
-    def setup(self):
+    def setup(self, arg_parser):
         if self.verbose:
             formatter = logging.Formatter(
                 "[%(levelname)s] %(asctime)s (%(funcName)s) = %(message)s"
@@ -49,10 +45,10 @@ class Config:
             logger.addHandler(logging.NullHandler())
             logger.propagate = False
         if not self.source and not self.cached:
-            raise SourceAndCachedArgsNotPassedError(
-                "Neither source, nor --date args were passed"
+            arg_parser.parser.error(
+                "Neither [source], nor [--date DATE] args were passed!"
             )
-        if self.check_urls:
+        if self.check_urls and not self.cached:
             logger.info("Enabled advanced url resolving mode.")
 
 
@@ -70,4 +66,4 @@ if not _cache_file_path.is_file():
 
 config = Config(_reader_dir_path, _cache_file_path)
 config.load_cli(_arg_parser.args)
-config.setup()
+config.setup(_arg_parser)
