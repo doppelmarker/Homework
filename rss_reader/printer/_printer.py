@@ -1,16 +1,15 @@
+import logging
 from typing import List
 
 from rss_reader.convert import to_json
 from rss_reader.rss_builder.rss_models import Feed
 
+logger = logging.getLogger("rss-reader")
+
 
 class NewsPrinter:
-    def __init__(self, converter, _to_json=False):
-        self.converter = converter
+    def __init__(self, _to_json):
         self.to_json = _to_json
-
-    def _print_converted(self, feeds: List[Feed]):
-        self.converter.convert(feeds)
 
     def _print_to_console(self, feeds: List[Feed]):
         if self.to_json:
@@ -47,5 +46,3 @@ class NewsPrinter:
 
     def print(self, feeds: List[Feed]):
         self._print_to_console(feeds)
-        if self.converter:
-            self._print_converted(feeds)

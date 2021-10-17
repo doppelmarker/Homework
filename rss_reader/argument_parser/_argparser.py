@@ -29,22 +29,24 @@ class ArgParser:
         self.parser.add_argument(
             "--date", help="Print news published on a specific date", type=str
         )
-        self.parser.add_argument(
+        self.to_html_action = self.parser.add_argument(
             "--to-html",
             type=str,
+            nargs="?",
             help="Convert news to .html format and save them by the specified folder path",
             metavar="FOLDER_PATH",
         )
-        self.parser.add_argument(
+        self.to_pdf_action = self.parser.add_argument(
             "--to-pdf",
             type=str,
+            nargs="?",
             help="Convert news to .pdf format and save them by the specified folder path",
             metavar="FOLDER_PATH",
         )
         self.parser.add_argument(
             "--check-urls",
-            help="Ensure a url represents an image by sending HEAD HTTP request "
-            "(requires aiohttp installation through pip install markedrss[aiohttp])",
+            help="Ensure url represents an image (requires installation of additional dependency, use: pip install "
+            "markedrss[aiohttp])",
             action="store_true",
         )
 

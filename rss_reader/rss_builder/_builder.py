@@ -1,5 +1,5 @@
 from rss_reader.rss_builder.rss_models import Feed
-from rss_reader.rss_builder.url_qualifier import URLQualifier
+from rss_reader.rss_builder.url_resolver import URLResolver
 
 
 class RSSBuilder:
@@ -28,7 +28,7 @@ class RSSBuilder:
             for i, item in zip(limitation_gen(self.limit), self.dom.find_all("item"))
         }
 
-        url_qualifier = URLQualifier(all_urls, self.check_urls)
+        url_qualifier = URLResolver(all_urls, self.check_urls)
 
         determined_urls = url_qualifier.determine_urls()
 

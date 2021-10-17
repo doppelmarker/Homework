@@ -31,7 +31,7 @@ class NewsCache:
             except ValueError:
                 pass
         raise ValueError(
-            f"{date_string!r} is not in a valid format! valid formats: {NewsCache.valid_date_formats}"
+            f"{date_string!r} is not in a valid format! Valid formats: {NewsCache.valid_date_formats}"
         )
 
     def cache_news(self, feed: Feed):
@@ -44,7 +44,7 @@ class NewsCache:
                 try:
                     json_dict = json.loads(json_content) if json_content else dict()
                 except json.decoder.JSONDecodeError:
-                    logger.warning("Cache file is damaged! Clearing cache file...")
+                    logger.warning("Cache file is damaged! Cleaning cache file...")
                     cache_file.truncate(0)
                     json_dict = dict()
 
@@ -63,7 +63,7 @@ class NewsCache:
                         json_dict[self.source].append(item.dict())
                 json.dump(json_dict, cache_file, indent=4, ensure_ascii=False)
         else:
-            raise FileNotFoundError("Cache file not found")
+            raise FileNotFoundError("Cache file was not found!")
 
     def get_cached_news(self, date, limit):
         if self.cache_file_path.is_file():
@@ -72,7 +72,7 @@ class NewsCache:
                     try:
                         json_dict = json.loads(json_content)
                     except json.decoder.JSONDecodeError:
-                        logger.warning("Cache file is damaged! Clearing cache file...")
+                        logger.warning("Cache file is damaged! Cleaning cache file...")
                         cache_file.truncate(0)
                         raise NewsNotFoundError(
                             "Cache file was damaged, that's why it was cleaned."
@@ -99,6 +99,10 @@ class NewsCache:
                     if self.source:
                         if self.source in json_dict.keys():
                             feeds.append(get_feed_with_news_on_date(self.source))
+                        else:
+                            raise NewsNotFoundError(
+                                f"No news specified by the RSS {self.source} was found in cache!"
+                            )
                     else:
                         for source in json_dict.keys():
                             feed = get_feed_with_news_on_date(source)
@@ -106,12 +110,14 @@ class NewsCache:
                                 feeds.append(feed)
 
                     if items_count == 0:
-                        raise NewsNotFoundError(
-                            f"No news found in cache for the specified date: {date}"
+                        no_news_msg = (
+                            f"No news published on {date} specified by the RSS {self.source} was found in cache!"
+                            if self.source
+                            else f"No news published on {date} was found in cache!"
                         )
-
+                        raise NewsNotFoundError(no_news_msg)
                     return feeds
                 else:
-                    raise NewsNotFoundError("Cache file is empty")
+                    raise NewsNotFoundError("Cache file is empty!")
         else:
-            raise FileNotFoundError("Cache file not found")
+            raise FileNotFoundError("Cache file was not found!")

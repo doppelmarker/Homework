@@ -13,10 +13,6 @@ from rss_reader.xml_parser.tokenizer import XMLError
 logger = logging.getLogger("rss-reader")
 
 
-class RestoredFromCache(Exception):
-    pass
-
-
 class NotRSSError(Exception):
     pass
 
@@ -33,7 +29,7 @@ class Reader:
             rss_webpage = get(self.config.source, timeout=5)
 
             if rss_webpage.headers["content-type"] != "application/xml":
-                raise NotRSSError(f"{self.config.source} is not an RSS!")
+                raise NotRSSError(f"{self.config.source} is not RSS!")
 
             parser = Parser(unescape(rss_webpage.text))
 
@@ -47,12 +43,15 @@ class Reader:
 
             return feed
         except (exceptions.ConnectionError, exceptions.Timeout) as e:
-            logger.error("Connection problems")
+            logger.error("Connection problems!")
             raise e
         except exceptions.RequestException as e:
-            logger.error("Invalid source URL")
+            logger.error(f"Invalid source URL: {self.config.source}!")
             raise e
         except XMLError as e:
+            logger.error(e)
+            raise e
+        except NotRSSError as e:
             logger.error(e)
             raise e
 
@@ -63,14 +62,15 @@ class Reader:
 
         if self.config.cached:
             feeds.extend(self._get_cached(cache))
+            logger.info("Restored data from cache.")
         else:
             feeds.append(self._get_parsed(cache))
 
-        converter = Converter(self.config.format) if self.config.format else None
-
-        printer = NewsPrinter(converter, self.config.json)
+        printer = NewsPrinter(self.config.json)
 
         printer.print(feeds)
 
-        if self.config.cached:
-            raise RestoredFromCache
+        converter = Converter(self.config.format) if self.config.format else None
+
+        if converter:
+            converter.convert(feeds)

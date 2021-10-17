@@ -59,6 +59,9 @@ _reader_dir_path = Path(Path.home(), "rss_reader")
 if not _reader_dir_path.is_dir():
     mkdir(_reader_dir_path)
 
+_arg_parser.to_html_action.const = _reader_dir_path
+_arg_parser.to_pdf_action.const = _reader_dir_path
+
 _cache_file_path = Path(_reader_dir_path, "cache.json")
 
 if not _cache_file_path.is_file():

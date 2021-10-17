@@ -17,7 +17,7 @@ class XMLError(Exception):
     pass
 
 
-class EmptyXMLDocumentError(XMLError):
+class EmptyXMLError(XMLError):
     pass
 
 
@@ -44,7 +44,7 @@ class UnexpectedEndOfDocumentError(XMLError):
 class Tokenizer:
     def __init__(self, xml):
         if len(xml) == 0:
-            raise EmptyXMLDocumentError("empty xml document")
+            raise EmptyXMLError("Empty XML document!")
         self.xml_io = StringIO(xml)
         self._skip_head()
         self.attributes = []
@@ -128,14 +128,14 @@ class Tokenizer:
         char = self._read_char(skip_ws)
         if char != expected:
             raise UnexpectedCharacterError(
-                f"unexpected character: expected [{expected}], got [{char}]"
+                f"Unexpected character: expected [{expected}], got [{char}]."
             )
 
     def _read_char(self, skip_ws=False):
         char = self.xml_io.read(1)
         if skip_ws:
             if char == "":
-                raise UnexpectedEndOfDocumentError("unexpected end of document")
+                raise UnexpectedEndOfDocumentError("Unexpected end of XML document!")
         while True:
             if char != "" and skip_ws and char.isspace():
                 char = self.xml_io.read(1)
@@ -174,7 +174,7 @@ class Tokenizer:
 
         self.tag_name = tag_name
 
-        INVALID_TAG = f"invalid tag: <{'' if is_start_tag else '/'}{tag_name}>"
+        INVALID_TAG = f"Invalid tag: <{'' if is_start_tag else '/'}{tag_name}>"
 
         if len(tag_name) == 0:
             raise InvalidTagError(INVALID_TAG)
@@ -215,18 +215,18 @@ class Tokenizer:
 
             if len(attr_name) == 0:
                 raise EmptyAttributeNameError(
-                    f"empty attribute name in tag: <{self.tag_name}>"
+                    f"Empty attribute name in tag: <{self.tag_name}>"
                 )
 
             if char.isspace():
                 char = self._read_char(True)
 
             if char != "=":
-                raise InvalidAttributeError("invalid attribute")
+                raise InvalidAttributeError("Invalid XML tag attribute")
 
             char = self._read_char(True)
             if char != "'" and char != '"':
-                raise InvalidAttributeError("invalid attribute")
+                raise InvalidAttributeError("Invalid XML tag attribute")
 
             delimiter = char
 

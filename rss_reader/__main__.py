@@ -1,7 +1,7 @@
 import logging
 
 from rss_reader.config import config
-from rss_reader.reader import NewsNotFoundError, Reader, RestoredFromCache
+from rss_reader.reader import NewsNotFoundError, Reader
 
 logger = logging.getLogger("rss-reader")
 
@@ -10,8 +10,6 @@ def main():
     reader = Reader(config)
     try:
         reader.start()
-    except RestoredFromCache:
-        logger.info("Restored data from cache")
     except NewsNotFoundError as e:
         logger.info(e)
     except Exception as e:

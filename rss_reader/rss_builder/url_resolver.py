@@ -7,7 +7,7 @@ from urllib.parse import urlparse
 logger = logging.getLogger("rss-reader")
 
 
-class URLQualifier:
+class URLResolver:
     def __init__(self, urls, check_urls):
         self.all_urls = urls
         self.check_urls = check_urls
@@ -33,9 +33,9 @@ class URLQualifier:
         for i, urls in self.all_urls.items():
             for url in urls:
                 url = url.removesuffix("/")
-                if URLQualifier._is_url_image_by_extension(url):
+                if URLResolver._is_url_image_by_extension(url):
                     results["image"].append((i, url))
-                if URLQualifier._is_url_audio_by_extension(url):
+                if URLResolver._is_url_audio_by_extension(url):
                     results["audio"].append((i, url))
                 else:
                     results["other"].append((i, url))
@@ -74,7 +74,9 @@ class URLQualifier:
             try:
                 import aiohttp
 
-                logger.info(f"There are {len(undefined_urls)} urls to check!")
+                logger.info(
+                    f"There are {len(undefined_urls)} urls to resolve. Please, wait..."
+                )
 
                 asyncio.run(determine_urls_images_by_mime_type(undefined_urls, results))
             except ModuleNotFoundError:

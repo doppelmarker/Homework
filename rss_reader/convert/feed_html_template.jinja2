@@ -72,13 +72,13 @@
                                 {% if link_type == "audios" and item.links[link_type] %}
                                     <ul>Audios:</ul>
                                     {% for link in item.links[link_type] %}
-                                        <li>{{ link }}</li>
+                                        <li><a href={{ link }}>{{ link }}</a></li>
                                     {% endfor %}
                                 {% endif %}
                                 {% if link_type == "others" and item.links[link_type] %}
                                     <ul>Other links:</ul>
                                     {% for link in item.links[link_type] %}
-                                        <li>{{ link }}</li>
+                                        <li><a href={{ link }}>{{ link }}</a></li>
                                     {% endfor %}
                                 {% endif %}
                             {% endfor %}

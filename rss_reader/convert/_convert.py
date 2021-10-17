@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 import warnings
 from pathlib import Path
 from typing import List
@@ -21,7 +22,7 @@ def to_json(model: BaseModel):
 
 
 class Converter:
-    def __init__(self, fmt):
+    def __init__(self, fmt: dict[str, str]):
         self.fmt = fmt
         self.module_dir = Path(__file__).parent
 
@@ -43,9 +44,9 @@ class Converter:
                 f"Failed to save html file. Seems directory {dir_path} doesn't exist."
             )
         else:
-            logger.info(f"Saved html in {file_path}")
+            logger.info(f"Saved html in {file_path}.")
 
-    def _to_pdf(self, feeds):
+    def _to_pdf(self, feeds: List[Feed]):
         dir_path = self.fmt["pdf"]
         file_path = Path(dir_path, "news.pdf")
 
@@ -60,14 +61,17 @@ class Converter:
                 )
 
                 if pisa_status.err:
-                    logger.warning("Some error occurred when converting feeds to pdf")
+                    logger.warning("Some error occurred when converting feeds to pdf!")
 
         except FileNotFoundError:
             logger.warning(
                 f"Failed to save pdf file. Seems directory {dir_path} doesn't exist."
             )
+        except Exception:
+            logger.warning(f"Failed to save pdf file. Check your internet connection.")
+            os.remove(file_path)
         else:
-            logger.info(f"Saved pdf in {file_path}")
+            logger.info(f"Saved pdf in {file_path}.")
 
     def convert(self, feeds: List[Feed]):
         if "html" in self.fmt:
