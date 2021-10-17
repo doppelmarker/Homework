@@ -9,6 +9,10 @@ from rss_reader.rss_builder.rss_models import Feed
 logger = logging.getLogger("rss-reader")
 
 
+class JSONFeeds(BaseModel):
+    feeds: List[Feed]
+
+
 class NewsPrinter:
     def __init__(self, _to_json):
         self.to_json = _to_json
@@ -22,8 +26,7 @@ class NewsPrinter:
 
     def _print_to_console(self, feeds: List[Feed]):
         if self.to_json:
-            for feed in feeds:
-                print(NewsPrinter._to_json(feed))
+            print(NewsPrinter._to_json(JSONFeeds(feeds=feeds)))
         else:
             for feed in feeds:
                 print(
