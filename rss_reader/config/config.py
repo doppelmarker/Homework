@@ -29,9 +29,11 @@ class Config:
             self.format.update(html=args.to_html)
         if args.to_pdf:
             self.format.update(pdf=args.to_pdf)
+        if args.to_epub:
+            self.format.update(epub=args.to_epub)
         self.check_urls = args.check_urls
 
-    def setup(self, arg_parser):
+    def setup(self, arg_parser: ArgParser):
         if self.verbose:
             formatter = logging.Formatter(
                 "[%(levelname)s] %(asctime)s (%(funcName)s) = %(message)s"
@@ -59,8 +61,10 @@ _reader_dir_path = Path(Path.home(), "rss_reader")
 if not _reader_dir_path.is_dir():
     mkdir(_reader_dir_path)
 
+# setting up default save path
 _arg_parser.to_html_action.const = _reader_dir_path
 _arg_parser.to_pdf_action.const = _reader_dir_path
+_arg_parser.to_epub_action.const = _reader_dir_path
 
 _cache_file_path = Path(_reader_dir_path, "cache.json")
 

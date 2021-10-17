@@ -1,7 +1,9 @@
+import json
 import logging
 from typing import List
 
-from rss_reader.convert import to_json
+from pydantic import BaseModel
+
 from rss_reader.rss_builder.rss_models import Feed
 
 logger = logging.getLogger("rss-reader")
@@ -11,10 +13,17 @@ class NewsPrinter:
     def __init__(self, _to_json):
         self.to_json = _to_json
 
+    @staticmethod
+    def _to_json(model: BaseModel):
+        model = model.json()
+        parsed_json = json.loads(model)
+        model = json.dumps(parsed_json, indent=4, ensure_ascii=False)
+        return model
+
     def _print_to_console(self, feeds: List[Feed]):
         if self.to_json:
             for feed in feeds:
-                print(to_json(feed))
+                print(NewsPrinter._to_json(feed))
         else:
             for feed in feeds:
                 print(

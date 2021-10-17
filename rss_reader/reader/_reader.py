@@ -3,7 +3,7 @@ from html import unescape
 
 from requests import exceptions, get
 
-from rss_reader.convert import Converter
+from rss_reader.converter import Converter
 from rss_reader.printer import NewsPrinter
 from rss_reader.reader import NewsCache
 from rss_reader.rss_builder import RSSBuilder

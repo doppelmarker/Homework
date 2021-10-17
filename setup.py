@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="markedrss",
-    version="3.0.0",
+    version="3.1.0",
     author="doppelmarker",
     author_email="doppelmarker@gmail.com",
     url="https://github.com/doppelmarker/Homework",
@@ -17,6 +17,7 @@ setup(
         "pydantic",
         "Jinja2",
         "xhtml2pdf",
+        "ebooklib",
     ],
     extras_require={
         "aiohttp": ["aiohttp"],

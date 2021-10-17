@@ -12,7 +12,7 @@ class ArgParser:
         )
         self.parser.add_argument("source", nargs="?", default=None, help="RSS URL")
         self.parser.add_argument(
-            "--version", help="Print version info", action="version", version="3.0.0"
+            "--version", help="Print version info", action="version", version="3.1.0"
         )
         self.parser.add_argument(
             "--limit",
@@ -41,6 +41,13 @@ class ArgParser:
             type=str,
             nargs="?",
             help="Convert news to .pdf format and save them by the specified folder path",
+            metavar="FOLDER_PATH",
+        )
+        self.to_epub_action = self.parser.add_argument(
+            "--to-epub",
+            type=str,
+            nargs="?",
+            help="Convert news to .epub format and save them by the specified folder path",
             metavar="FOLDER_PATH",
         )
         self.parser.add_argument(

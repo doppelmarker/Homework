@@ -1,24 +1,16 @@
-import json
 import logging
 import os
 import warnings
 from pathlib import Path
 from typing import List
 
+from ebooklib import epub
 from jinja2 import Template
-from pydantic import BaseModel
 from xhtml2pdf import pisa
 
 from rss_reader.rss_builder.rss_models import Feed
 
 logger = logging.getLogger("rss-reader")
-
-
-def to_json(model: BaseModel):
-    model = model.json()
-    parsed_json = json.loads(model)
-    model = json.dumps(parsed_json, indent=4, ensure_ascii=False)
-    return model
 
 
 class Converter:
@@ -27,9 +19,11 @@ class Converter:
         self.module_dir = Path(__file__).parent
 
     def _get_html(self, **kwargs):
-        template = Template(
-            open(Path(self.module_dir, "feed_html_template.jinja2")).read()
-        )
+        template = Template(open(Path(self.module_dir, "html_template.jinja2")).read())
+        return template.render(**kwargs)
+
+    def _get_xhtml(self, **kwargs):
+        template = Template(open(Path(self.module_dir, "xhtml_template.jinja2")).read())
         return template.render(**kwargs)
 
     def _to_html(self, feeds: List[Feed]):
@@ -73,8 +67,42 @@ class Converter:
         else:
             logger.info(f"Saved pdf in {file_path}.")
 
+    def _to_epub(self, feeds: List[Feed]):
+        dir_path = self.fmt["epub"]
+        file_path = Path(dir_path, "news.epub")
+
+        book = epub.EpubBook()
+        book.set_identifier("id")
+        book.set_title("RSS News")
+        book.set_language("en")
+
+        toc = []
+        spine = ["nav"]
+
+        for feed in feeds:
+            for num, item in enumerate(feed.items, start=1):
+                chapter = epub.EpubHtml(title=item.title, file_name=f"{num}.xhtml")
+                chapter.content = self._get_xhtml(item=item, language=feed.language)
+
+                book.add_item(chapter)
+                spine.append(chapter)
+                toc.append(epub.Section(item.title))
+                toc.append(chapter)
+
+        book.toc = tuple(toc)
+        book.spine = spine
+
+        book.add_item(epub.EpubNcx())
+        book.add_item(epub.EpubNav())
+
+        epub.write_epub(file_path, book)
+
+        logger.info(f"Saved epub in {file_path}.")
+
     def convert(self, feeds: List[Feed]):
         if "html" in self.fmt:
             self._to_html(feeds)
         if "pdf" in self.fmt:
             self._to_pdf(feeds)
+        if "epub" in self.fmt:
+            self._to_epub(feeds)

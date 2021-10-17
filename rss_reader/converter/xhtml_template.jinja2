@@ -1,0 +1,42 @@
+{# XML template for epub conversion #}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="{{ language }}">
+<head>
+    <meta content="text/html; charset=utf-8">
+    <title>{{ item.title }}</title>
+</head>
+<body>
+{% if item.title %}
+    <p class="item_title">{{ item.title }}</p>
+{% endif %}
+{% if item.pubDate %}
+    <p class="publish_date">{{ item.pubDate }}</p>
+{% endif %}
+<div class="description">
+    <p class="description_text">{{ item.description }}</p>
+    {% for link_type in item.links.keys() %}
+        {% if link_type == "images" and item.links[link_type] %}
+            <p>Images:</p>
+            <div class="container">
+                {% for link in item.links[link_type] %}
+                    <img width="250" class="feed_image" src={{ link }} alt="feed_image"/>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% if link_type == "audios" and item.links[link_type] %}
+            <ul>Audios:</ul>
+            {% for link in item.links[link_type] %}
+                <li><a href={{ link }}>{{ link }}</a></li>
+            {% endfor %}
+        {% endif %}
+        {% if link_type == "others" and item.links[link_type] %}
+            <ul>Other links:</ul>
+            {% for link in item.links[link_type] %}
+                <li><a href={{ link }}>{{ link }}</a></li>
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+</div>
+</body>
+</html>
