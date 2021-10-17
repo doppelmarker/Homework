@@ -28,7 +28,7 @@ class Reader:
         try:
             rss_webpage = get(self.config.source, timeout=5)
 
-            if rss_webpage.headers["content-type"] != "application/xml":
+            if "application/xml" not in rss_webpage.headers["content-type"]:
                 raise NotRSSError(f"{self.config.source} is not RSS!")
 
             parser = Parser(unescape(rss_webpage.text))
