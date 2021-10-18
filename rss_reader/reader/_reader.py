@@ -66,7 +66,7 @@ class Reader:
         else:
             feeds.append(self._get_parsed(cache))
 
-        printer = NewsPrinter(self.config.json)
+        printer = NewsPrinter(self.config.json, self.config.colorize)
 
         printer.print(feeds)
 

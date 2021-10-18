@@ -18,6 +18,7 @@ class Config:
         self.cached = None
         self.format = {}
         self.check_urls = None
+        self.colorize = None
 
     def load_cli(self, args):
         self.source = args.source
@@ -31,6 +32,7 @@ class Config:
             self.format.update(pdf=args.to_pdf)
         if args.to_epub:
             self.format.update(epub=args.to_epub)
+        self.colorize = args.colorize
         self.check_urls = args.check_urls
 
     def setup(self, arg_parser: ArgParser):

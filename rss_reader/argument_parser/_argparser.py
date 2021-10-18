@@ -12,7 +12,7 @@ class ArgParser:
         )
         self.parser.add_argument("source", nargs="?", default=None, help="RSS URL")
         self.parser.add_argument(
-            "--version", help="Print version info", action="version", version="3.1.0"
+            "--version", help="Print version info", action="version", version="3.2.0"
         )
         self.parser.add_argument(
             "--limit",
@@ -49,6 +49,9 @@ class ArgParser:
             nargs="?",
             help="Convert news to .epub format and save them by the specified folder path",
             metavar="FOLDER_PATH",
+        )
+        self.parser.add_argument(
+            "--colorize", help="Print news in colorized mode", action="store_true"
         )
         self.parser.add_argument(
             "--check-urls",
