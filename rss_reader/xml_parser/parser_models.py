@@ -48,7 +48,7 @@ class Element(BaseModel):
                     yield attr.value
             yield from child.find_urls()
 
-    def _find_text(self):
+    def find_text(self):
         for child in self.children:
             if not child.tag_name:
                 yield child.text.strip()
@@ -56,7 +56,7 @@ class Element(BaseModel):
 
     def get_element_text(self, tag_name):
         try:
-            return " ".join(part for part in self.find(tag_name)._find_text() if part)
+            return " ".join(part for part in self.find(tag_name).find_text() if part)
         except AttributeError:
             return ""
 
