@@ -80,7 +80,7 @@ class NewsPrinter:
             print(
                 Style.NORMAL
                 + Fore.LIGHTWHITE_EX
-                + Back.LIGHTYELLOW_EX
+                + Back.RED
                 + f"\nLink: {feed.link}\n"
                 + Style.RESET_ALL,
                 end="",
@@ -89,7 +89,7 @@ class NewsPrinter:
                 print(
                     Style.NORMAL
                     + Fore.LIGHTWHITE_EX
-                    + Back.LIGHTYELLOW_EX
+                    + Back.RED
                     + f"\nImage: {feed.image}\n"
                     + Style.RESET_ALL,
                     end="",
