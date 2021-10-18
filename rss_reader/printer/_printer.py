@@ -60,11 +60,11 @@ class NewsPrinter:
     def _print_colored(feeds: List[Feed]):
         init()
         for feed in feeds:
-            print(Back.LIGHTYELLOW_EX + "\n" + Style.RESET_ALL, end="")
+            print(Back.RED + "\n" + Style.RESET_ALL, end="")
             print(
                 Style.NORMAL
                 + Fore.LIGHTWHITE_EX
-                + Back.LIGHTYELLOW_EX
+                + Back.RED
                 + f"\nFeed: {feed.title}\n"
                 + Style.RESET_ALL,
                 end="",
@@ -99,15 +99,15 @@ class NewsPrinter:
                     print(
                         Style.NORMAL
                         + Fore.LIGHTWHITE_EX
-                        + Back.GREEN
+                        + Back.LIGHTBLACK_EX
                         + f"\nItem {item.id}:",
                         end="\n\n   ",
                     )
                 else:
                     print(
                         Style.NORMAL
-                        + Fore.LIGHTWHITE_EX
-                        + Back.LIGHTCYAN_EX
+                        + Fore.LIGHTBLACK_EX
+                        + Back.LIGHTWHITE_EX
                         + f"\nItem {item.id}:",
                         end="\n\n   ",
                     )
