@@ -2,9 +2,13 @@ import asyncio
 import logging
 import platform
 import re
+from collections import namedtuple
+from typing import List
 from urllib.parse import urlparse
 
 logger = logging.getLogger("rss-reader")
+
+URL = namedtuple("URL", "item_num source")
 
 
 class URLResolver:
@@ -28,17 +32,17 @@ class URLResolver:
                 return True
         return False
 
-    def determine_urls(self):
+    def determine_urls(self) -> dict[str, List[URL]]:
         results = {"image": [], "audio": [], "other": []}
         for i, urls in self.all_urls.items():
             for url in urls:
                 url = url.removesuffix("/")
                 if URLResolver._is_url_image_by_extension(url):
-                    results["image"].append((i, url))
-                if URLResolver._is_url_audio_by_extension(url):
-                    results["audio"].append((i, url))
+                    results["image"].append(URL(i, url))
+                elif URLResolver._is_url_audio_by_extension(url):
+                    results["audio"].append(URL(i, url))
                 else:
-                    results["other"].append((i, url))
+                    results["other"].append(URL(i, url))
 
         if self.check_urls:
 
@@ -63,7 +67,7 @@ class URLResolver:
             pattern = re.compile(r"\.[a-z]+$")
             undefined_urls = list(
                 filter(
-                    lambda undefined_url: not re.search(pattern, undefined_url[1]),
+                    lambda undefined_url: not re.search(pattern, undefined_url.source),
                     results["other"],
                 )
             )

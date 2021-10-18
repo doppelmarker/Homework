@@ -8,13 +8,6 @@ class RSSBuilder:
         self.limit = limit
         self.check_urls = check_urls
 
-    @staticmethod
-    def _get_element_text(element, tag_name):
-        try:
-            return " ".join(part for part in element.find(tag_name).find_text() if part)
-        except AttributeError:
-            return ""
-
     def build_feed(self) -> Feed:
         def limitation_gen(limit):
             """Helper generator function to yield limited amount of items."""
@@ -28,32 +21,32 @@ class RSSBuilder:
             for i, item in zip(limitation_gen(self.limit), self.dom.find_all("item"))
         }
 
-        url_qualifier = URLResolver(all_urls, self.check_urls)
+        url_resolver = URLResolver(all_urls, self.check_urls)
 
-        determined_urls = url_qualifier.determine_urls()
+        determined_urls = url_resolver.determine_urls()
 
         feed_items = []
 
         for i, item in zip(limitation_gen(self.limit), self.dom.find_all("item")):
-            feed_link = self._get_element_text(item, "link")
+            feed_link = item.get_element_text("link")
 
             images = list(
                 map(
-                    lambda url: url[1],
-                    filter(lambda url: url[0] == i, determined_urls["image"]),
+                    lambda url: url.source,
+                    filter(lambda url: url.item_num == i, determined_urls["image"]),
                 )
             )
             audios = list(
                 map(
-                    lambda url: url[1],
-                    filter(lambda url: url[0] == i, determined_urls["audio"]),
+                    lambda url: url.source,
+                    filter(lambda url: url.item_num == i, determined_urls["audio"]),
                 )
             )
             others = list(
                 map(
-                    lambda url: url[1],
+                    lambda url: url.source,
                     filter(
-                        lambda url: url[0] == i and url[1] != feed_link,
+                        lambda url: url.item_num == i and url.source != feed_link,
                         determined_urls["other"],
                     ),
                 )
@@ -61,11 +54,11 @@ class RSSBuilder:
 
             feed_item = {
                 "id": i,
-                "title": self._get_element_text(item, "title"),
-                "description": self._get_element_text(item, "description"),
+                "title": item.get_element_text("title"),
+                "description": item.get_element_text("description"),
                 "link": feed_link,
-                "author": self._get_element_text(item, "author"),
-                "pubDate": self._get_element_text(item, "pubDate"),
+                "author": item.get_element_text("author"),
+                "pubDate": item.get_element_text("pubDate"),
                 "links": {
                     "images": images,
                     "audios": audios,
@@ -75,11 +68,11 @@ class RSSBuilder:
             feed_items.append(feed_item)
 
         feed_data = {
-            "title": self._get_element_text(self.dom, "title"),
-            "description": self._get_element_text(self.dom, "description"),
-            "link": self._get_element_text(self.dom, "link"),
-            "image": self._get_element_text(self.dom.find("image"), "url"),
-            "language": self._get_element_text(self.dom, "language"),
+            "title": self.dom.get_element_text("title"),
+            "description": self.dom.get_element_text("description"),
+            "link": self.dom.get_element_text("link"),
+            "image": self.dom.find("image").get_element_text("url"),
+            "language": self.dom.get_element_text("language"),
             "items": feed_items,
         }
 

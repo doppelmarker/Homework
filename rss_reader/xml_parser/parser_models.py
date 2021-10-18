@@ -20,6 +20,10 @@ class Element(BaseModel):
         for child in self.children:
             if child.tag_name == tag_name:
                 yield child
+                # apparently, find_all is used only for finding all items in RSS, thus, keeping into account <item>
+                # tag in RSS can not contain another <item> tag, we can use continue in order to speed up items
+                # exploration: we are not forced to traverse the whole item structure; summing up, find_all will find
+                # only unnested elements
                 continue
             yield from child.find_all(tag_name)
 
@@ -44,11 +48,17 @@ class Element(BaseModel):
                     yield attr.value
             yield from child.find_urls()
 
-    def find_text(self):
+    def _find_text(self):
         for child in self.children:
             if not child.tag_name:
                 yield child.text.strip()
             yield from child.find_text()
+
+    def get_element_text(self, tag_name):
+        try:
+            return " ".join(part for part in self.find(tag_name)._find_text() if part)
+        except AttributeError:
+            return ""
 
     def __str__(self):
         return f"<{self.tag_name}>"
