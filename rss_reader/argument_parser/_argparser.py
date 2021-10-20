@@ -1,4 +1,4 @@
-"""Module which encompasses console arguments parsing logics."""
+"""Module which encompasses console arguments settings and parsing logics."""
 import argparse
 
 
