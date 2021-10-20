@@ -6,7 +6,7 @@ from typing import List
 from colorama import Back, Fore, Style, init
 from pydantic import BaseModel
 
-from rss_reader.rss_builder.rss_models import Feed
+from rss_reader.rss_builder._rss_models import Feed
 
 logger = logging.getLogger("rss-reader")
 
@@ -21,8 +21,8 @@ class NewsPrinter:
     """Class for printing parsed feeds to console. Depending on whether --colorize argument was passed,
     news are printed either colored or not."""
 
-    def __init__(self, _to_json: bool, colorize: bool):
-        self.to_json = _to_json
+    def __init__(self, to_json: bool, colorize: bool):
+        self.to_json = to_json
         self.colorize = colorize
 
     @staticmethod

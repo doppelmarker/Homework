@@ -9,10 +9,8 @@ from rss_reader.config import Config
 from rss_reader.converter import Converter
 from rss_reader.printer import NewsPrinter
 from rss_reader.reader import NewsCache
-from rss_reader.rss_builder import RSSBuilder
-from rss_reader.rss_builder.rss_models import Feed
-from rss_reader.xml_parser import Parser
-from rss_reader.xml_parser.tokenizer import XMLError
+from rss_reader.rss_builder import Feed, RSSBuilder
+from rss_reader.xml_parser import Parser, XMLError
 
 logger = logging.getLogger("rss-reader")
 

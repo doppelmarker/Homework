@@ -2,7 +2,7 @@
 from enum import Enum
 from io import StringIO
 
-from rss_reader.xml_parser.parser_models import Attribute, Element
+from ._parser_models import Attribute, Element
 
 
 class TokenType(Enum):

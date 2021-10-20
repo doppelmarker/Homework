@@ -2,7 +2,7 @@
 import logging
 from collections import deque
 
-from rss_reader.xml_parser.tokenizer import Tokenizer, TokenType, XMLError
+from ._tokenizer import Tokenizer, TokenType, XMLError
 
 logger = logging.getLogger("rss-reader")
 

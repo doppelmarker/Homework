@@ -15,7 +15,7 @@ from ebooklib import epub
 from jinja2 import Template
 from xhtml2pdf import pisa
 
-from rss_reader.rss_builder.rss_models import Feed
+from rss_reader.rss_builder._rss_models import Feed
 
 logger = logging.getLogger("rss-reader")
 
