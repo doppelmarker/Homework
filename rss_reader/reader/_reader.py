@@ -20,8 +20,6 @@ logger = logging.getLogger("rss-reader")
 class NotRSSError(Exception):
     """Raised whenever the link given in source argument leads not to XML page."""
 
-    pass
-
 
 class Reader:
     """Entry class encompassing the core application logics."""
