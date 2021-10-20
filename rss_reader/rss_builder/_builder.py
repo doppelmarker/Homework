@@ -1,16 +1,23 @@
+"""Module providing logics on building RSS feeds."""
 from rss_reader.rss_builder.rss_models import Feed
 from rss_reader.rss_builder.url_resolver import URLResolver
+from rss_reader.xml_parser.parser_models import Element
 
 
 class RSSBuilder:
-    def __init__(self, dom, limit, check_urls):
+    """Class to build RSS feed based on dom object of parsed XML."""
+
+    def __init__(self, dom: Element, limit: int, check_urls: bool):
         self.dom = dom
         self.limit = limit
         self.check_urls = check_urls
 
     def build_feed(self) -> Feed:
-        def limitation_gen(limit):
-            """Helper generator function to yield limited amount of items."""
+        """Public method to build RSS Feed. At the beginning it collects all urls from items in XML dom object to
+        resolve their types, after that RSS items are built with resolved urls."""
+
+        def limitation_gen(limit: int):
+            """Helper generator function to yield limited amount of items. Used in conjunction with zip function."""
             i = 1
             while i != limit + 1:
                 yield i
@@ -18,36 +25,40 @@ class RSSBuilder:
 
         all_urls = {
             i: set(item.find_urls())
-            for i, item in zip(limitation_gen(self.limit), self.dom.find_all("item"))
+            for i, item in zip(
+                limitation_gen(self.limit), self.dom.find_all("item", nested=False)
+            )
         }
 
         url_resolver = URLResolver(all_urls, self.check_urls)
 
-        determined_urls = url_resolver.determine_urls()
+        resolved_urls = url_resolver.resolve_urls()
 
         feed_items = []
 
-        for i, item in zip(limitation_gen(self.limit), self.dom.find_all("item")):
-            feed_link = item.get_element_text("link")
+        for i, item in zip(
+            limitation_gen(self.limit), self.dom.find_all("item", nested=False)
+        ):
+            item_link = item.get_element_text("link")
 
             images = list(
                 map(
                     lambda url: url.source,
-                    filter(lambda url: url.item_num == i, determined_urls["image"]),
+                    filter(lambda url: url.item_num == i, resolved_urls["image"]),
                 )
             )
             audios = list(
                 map(
                     lambda url: url.source,
-                    filter(lambda url: url.item_num == i, determined_urls["audio"]),
+                    filter(lambda url: url.item_num == i, resolved_urls["audio"]),
                 )
             )
             others = list(
                 map(
                     lambda url: url.source,
                     filter(
-                        lambda url: url.item_num == i and url.source != feed_link,
-                        determined_urls["other"],
+                        lambda url: url.item_num == i and url.source != item_link,
+                        resolved_urls["other"],
                     ),
                 )
             )
@@ -56,7 +67,7 @@ class RSSBuilder:
                 "id": i,
                 "title": item.get_element_text("title"),
                 "description": item.get_element_text("description"),
-                "link": feed_link,
+                "link": item_link,
                 "author": item.get_element_text("author"),
                 "pubDate": item.get_element_text("pubDate"),
                 "links": {

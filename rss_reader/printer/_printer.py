@@ -1,3 +1,4 @@
+"""Module keeps the logic of printing parsed feeds."""
 import json
 import logging
 from typing import List
@@ -17,12 +18,16 @@ class JSONFeeds(BaseModel):
 
 
 class NewsPrinter:
-    def __init__(self, _to_json, colorize):
+    """Class for printing parsed feeds to console. Depending on whether --colorize argument was passed,
+    news are printed either colored or not."""
+
+    def __init__(self, _to_json: bool, colorize: bool):
         self.to_json = _to_json
         self.colorize = colorize
 
     @staticmethod
     def _to_json(model: BaseModel):
+        """Method to convert feeds to json format."""
         model = model.json()
         parsed_json = json.loads(model)
         model = json.dumps(parsed_json, indent=4, ensure_ascii=False)
@@ -30,6 +35,7 @@ class NewsPrinter:
 
     @staticmethod
     def _print_uncolored(feeds: List[Feed]):
+        """Prints news without colorizing."""
         for feed in feeds:
             print(f"Feed: {feed.title}\n\n{feed.description}\n\nLink: {feed.link}\n")
             if feed.image:
@@ -58,6 +64,12 @@ class NewsPrinter:
 
     @staticmethod
     def _print_colored(feeds: List[Feed]):
+        """
+        Prints colorized news.
+        Attention! Colorization strongly depends on the type of the terminal the final user
+        utilizes and may look rather clumsy in some of them.
+        """
+        # colorama's init
         init()
         for feed in feeds:
             print(Back.RED + "\n" + Style.RESET_ALL, end="")
@@ -132,6 +144,7 @@ class NewsPrinter:
             print(Style.RESET_ALL)
 
     def print(self, feeds: List[Feed]):
+        """Public method to print obtained feeds to console."""
         if self.to_json:
             print(NewsPrinter._to_json(JSONFeeds(feeds=feeds)))
         elif self.colorize:

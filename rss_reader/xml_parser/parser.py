@@ -1,3 +1,4 @@
+"""Module holding XML parsing logics based on exploiting tokenization principle."""
 import logging
 from collections import deque
 
@@ -7,10 +8,13 @@ logger = logging.getLogger("rss-reader")
 
 
 class Parser:
-    def __init__(self, xml):
+    """XML parser class exploiting tokenization principle."""
+
+    def __init__(self, xml: str):
         self.xml = xml
 
-    def _tokenize(self, tokenizer, stack):
+    def _tokenize(self, tokenizer: Tokenizer, stack: deque) -> None:
+        """Tokenization method. Acts based on the current token_type."""
         try:
             for token in tokenizer:
                 if tokenizer.token_type == TokenType.START_TAG:
@@ -25,17 +29,19 @@ class Parser:
                                 pass
                         except IndexError:
                             # issue with https://feedforall.com/sample.xml
-                            raise XMLError("invalid xml")
+                            raise XMLError("Invalid XML!")
                 elif tokenizer.token_type == TokenType.TEXT:
                     if not tokenizer.text.isspace():
                         stack[-1].children.append(token)
                         token.parent = stack[-1]
                 elif tokenizer.token_type == TokenType.CDATA:
+                    # recursively parse CDATA
                     self._tokenize(tokenizer.cdata_tokenizer, stack)
         finally:
             tokenizer.xml_io.close()
 
     def parse(self):
+        """Public method providing an interface for parsing XML."""
         tokenizer = Tokenizer(self.xml)
 
         element_stack = deque()

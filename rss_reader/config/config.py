@@ -1,3 +1,9 @@
+"""
+Application's configuration module. Contains path configuration logics.
+Provides instance of Config class, this instance possesses fields representing passed console arguments.
+These fields are subsequently used to adjust the workflow of the application.
+"""
+import argparse
 import logging
 from os import mkdir
 from pathlib import Path
@@ -8,7 +14,14 @@ logger = logging.getLogger("rss-reader")
 
 
 class Config:
-    def __init__(self, reader_dir_path, cache_file_path):
+    """
+    Class, whose instances hold fields representing passed console arguments, path of the utility directory,
+    where cache file will be precisely stored. Also, by default, all feeds converted to supported formats are stored
+    by the exact same path, if corresponding arguments such like --to-html where not passed with other directory
+    path to redetermine where to save these files to.
+    """
+
+    def __init__(self, reader_dir_path: Path, cache_file_path: Path):
         self.reader_dir_path = reader_dir_path
         self.cache_file_path = cache_file_path
         self.source = None
@@ -20,7 +33,8 @@ class Config:
         self.check_urls = None
         self.colorize = None
 
-    def load_cli(self, args):
+    def load_cli(self, args: argparse.Namespace) -> None:
+        """Loads command line arguments to config."""
         self.source = args.source
         self.limit = args.limit
         self.json = args.json
@@ -35,7 +49,12 @@ class Config:
         self.colorize = args.colorize
         self.check_urls = args.check_urls
 
-    def setup(self, arg_parser: ArgParser):
+    def setup(self, arg_parser: ArgParser) -> None:
+        """
+        Provides logics of initial user notification about possible activation of verbose and advanced url resolving
+        modes depending on incoming console arguments. Also validates whether either source url or date arguments
+        were passed by user.
+        """
         if self.verbose:
             formatter = logging.Formatter(
                 "[%(levelname)s] %(asctime)s (%(funcName)s) = %(message)s"
@@ -63,7 +82,7 @@ _reader_dir_path = Path(Path.home(), "rss_reader")
 if not _reader_dir_path.is_dir():
     mkdir(_reader_dir_path)
 
-# setting up default save path
+# setting up default save path for supported types of feeds' conversion
 _arg_parser.to_html_action.const = _reader_dir_path
 _arg_parser.to_pdf_action.const = _reader_dir_path
 _arg_parser.to_epub_action.const = _reader_dir_path

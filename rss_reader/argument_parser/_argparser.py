@@ -1,7 +1,10 @@
+"""Module which encompasses console arguments parsing logics."""
 import argparse
 
 
 class ArgParser:
+    """Class parsing console arguments."""
+
     def __init__(self):
         self.parser = argparse.ArgumentParser(
             prog="markedrss",
@@ -27,25 +30,22 @@ class ArgParser:
             "--verbose", help="Output verbose status messages", action="store_true"
         )
         self.parser.add_argument(
-            "--date", help="Print news published on a specific date", type=str
+            "--date", help="Print news published on a specific date"
         )
         self.to_html_action = self.parser.add_argument(
             "--to-html",
-            type=str,
             nargs="?",
             help="Convert news to .html format and save them by the specified folder path",
             metavar="FOLDER_PATH",
         )
         self.to_pdf_action = self.parser.add_argument(
             "--to-pdf",
-            type=str,
             nargs="?",
             help="Convert news to .pdf format and save them by the specified folder path",
             metavar="FOLDER_PATH",
         )
         self.to_epub_action = self.parser.add_argument(
             "--to-epub",
-            type=str,
             nargs="?",
             help="Convert news to .epub format and save them by the specified folder path",
             metavar="FOLDER_PATH",
@@ -61,5 +61,6 @@ class ArgParser:
         )
 
     @property
-    def args(self):
+    def args(self) -> argparse.Namespace:
+        """Property field to return parsed console arguments."""
         return self.parser.parse_args()

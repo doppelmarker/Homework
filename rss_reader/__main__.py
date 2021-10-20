@@ -1,3 +1,14 @@
+"""
+Main module, contains entry point to the rss_reader.
+"""
+import sys
+from pathlib import Path
+
+# add rss_reader package path to sys.path
+rss_reader_pkg_path = str(Path(__file__).parent.parent.resolve())
+sys.path.insert(0, rss_reader_pkg_path)
+
+
 import logging
 
 from rss_reader.config import config
@@ -7,6 +18,7 @@ logger = logging.getLogger("rss-reader")
 
 
 def main():
+    """Main function, called when running the exported CLI utility or straightforwardly this module."""
     reader = Reader(config)
     try:
         reader.start()
