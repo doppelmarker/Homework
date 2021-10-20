@@ -6,7 +6,7 @@ from typing import List
 from colorama import Back, Fore, Style, init
 from pydantic import BaseModel
 
-from rss_reader.rss_builder._rss_models import Feed
+from rss_reader.rss_builder import Feed
 
 logger = logging.getLogger("rss-reader")
 

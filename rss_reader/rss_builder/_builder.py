@@ -1,7 +1,8 @@
 """Module providing logics on building RSS feeds."""
-from rss_reader.rss_builder._rss_models import Feed
-from rss_reader.rss_builder._url_resolver import URLResolver
-from rss_reader.xml_parser._parser_models import Element
+from rss_reader.xml_parser import Element
+
+from ._rss_models import Feed
+from ._url_resolver import URLResolver
 
 
 class RSSBuilder:

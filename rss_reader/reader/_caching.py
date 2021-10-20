@@ -9,7 +9,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import List, Optional
 
-from rss_reader.rss_builder._rss_models import Feed, Item
+from rss_reader.rss_builder import Feed, Item
 
 logger = logging.getLogger("rss-reader")
 
