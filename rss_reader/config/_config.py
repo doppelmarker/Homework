@@ -38,8 +38,8 @@ class Config(ArgParser, ConfigParser):
         self._log_dir_path = None
         self._cache_dir_path = None
 
-    def _set_defaults(self, default_reader_dir_path_: Path):
-        """Sets default dir paths."""
+    def _set_defaults(self, default_reader_dir_path_: Path) -> None:
+        """Sets default dir paths. If a valid DEFAULT_DIR_PATH is set in .ini file, it overrides the original one."""
         global default_reader_dir_path
         default_reader_dir_path = default_reader_dir_path_
         self._log_dir_path = default_reader_dir_path_
@@ -59,7 +59,7 @@ class Config(ArgParser, ConfigParser):
             return
 
         if default_dir_path := self["rss-reader"].get("DEFAULT_DIR_PATH", None):
-            if Config._is_ini_default_dir_path_valid(default_dir_path):
+            if Config._is_ini_default_dir_path_valid(Path(default_dir_path)):
                 self._set_defaults(Path(default_dir_path))
         if cache_dir_path := self["rss-reader"].get("CACHE_DIR_PATH", None):
             self._cache_dir_path = Path(cache_dir_path)
@@ -91,7 +91,7 @@ class Config(ArgParser, ConfigParser):
         self.check_urls = cli_args.check_urls
 
     @staticmethod
-    def _is_ini_default_dir_path_valid(dir_path) -> bool:
+    def _is_ini_default_dir_path_valid(dir_path: Path) -> bool:
         """Checks whether default dir path in .ini config is valid."""
         try:
             if not Path(dir_path).is_dir():
@@ -104,7 +104,7 @@ class Config(ArgParser, ConfigParser):
             return False
 
     @staticmethod
-    def _make_file(dir_path, file_name):
+    def _make_file(dir_path: Path, file_name: str) -> None:
         """
         Generic method to build directory and file with the given dir_path and file_name. The purpose of this method
         is to handle possible exceptions connected with invalid paths specified either as cli arguments or inside
@@ -123,7 +123,7 @@ class Config(ArgParser, ConfigParser):
         file_path = Path(dir_path, file_name)
         Path(file_path).touch()
 
-    def _make_logs(self):
+    def _make_logs(self) -> None:
         """
         Makes logs directory both with rss_reader.log file. If the specified LOG_DIR_PATH in the .ini file was absent or
         invalid, then logs' directory becomes DEFAULT_DIR_PATH from .ini file. But if then DEFAULT_DIR_PATH is either
@@ -138,7 +138,7 @@ class Config(ArgParser, ConfigParser):
             )
             Config._make_file(default_reader_dir_path, "rss_reader.log")
 
-    def _make_cache(self):
+    def _make_cache(self) -> None:
         """
         Makes cache directory both with cache.json file. If the specified CACHE_DIR_PATH in the .ini file was absent or
         invalid, then cache's directory becomes DEFAULT_DIR_PATH from .ini file. But if then DEFAULT_DIR_PATH is either
@@ -155,7 +155,7 @@ class Config(ArgParser, ConfigParser):
             Config._make_file(default_reader_dir_path, "cache.json")
             self.cache_file_path = Path(default_reader_dir_path, "cache.json")
 
-    def _make_convert_files(self):
+    def _make_convert_files(self) -> None:
         r"""
         Makes a directory for converted files specified in command line (e.g. --to-html, --to-pdf) and these files.
 
@@ -177,7 +177,7 @@ class Config(ArgParser, ConfigParser):
                 )
                 Config._make_file(default_reader_dir_path, f"news.{f}")
 
-    def _make_files(self):
+    def _make_files(self) -> None:
         """Makes all the necessary files for the application to work."""
         self._make_logs()
         self._make_cache()
