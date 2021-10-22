@@ -99,7 +99,7 @@ class NewsCache:
         whole first feed with 3 news from cache and the second feed but only with 1 news.
         """
         if self.cache_file_path.is_file():
-            with open(self.cache_file_path, "r", encoding="utf-8") as cache_file:
+            with open(self.cache_file_path, "r+", encoding="utf-8") as cache_file:
                 if json_content := cache_file.read():
                     try:
                         json_dict = json.loads(json_content)
