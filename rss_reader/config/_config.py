@@ -12,6 +12,8 @@ from pathlib import Path
 from rss_reader.argument_parser import ArgParser
 
 config_logger = logging.getLogger("config")
+# if --verbose not passed, config_logger doesn't print logs to console
+config_logger.setLevel("CRITICAL")
 main_logger = logging.getLogger("rss-reader")
 
 # default application directory
@@ -202,7 +204,7 @@ class Config(ArgParser, ConfigParser):
 
         # if --verbose passed, config logs are printed to console
         if self.verbose:
-            config_logger.setLevel("DEBUG")
+            config_logger.setLevel("INFO")
 
         formatter = logging.Formatter(
             "[%(levelname)s] %(asctime)s [%(name)s] (%(module)s.py:%(funcName)s) = %(message)s"
@@ -233,18 +235,16 @@ class Config(ArgParser, ConfigParser):
         main_logger.addHandler(s_handler)
         main_logger.addHandler(f_handler)
 
+        if not self.source and not self.cached:
+            self.parser.error("Neither [source], nor [--date DATE] args were passed!")
         if self.verbose:
-            main_logger.setLevel("DEBUG")
+            main_logger.setLevel("INFO")
             main_logger.info("Enabled verbose mode.")
         else:
             main_logger.addHandler(logging.NullHandler())
             main_logger.propagate = False
-        if not self.source and not self.cached:
-            argp_err_msg = "Neither [source], nor [--date DATE] args were passed!"
-            main_logger.error(argp_err_msg)
-            self.parser.error(argp_err_msg)
         if self.check_urls and not self.cached:
-            main_logger.info("Enabled advanced url resolving mode.")
+            main_logger.info("Enabled advanced URL resolving mode.")
 
 
 config = Config()
