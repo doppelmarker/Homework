@@ -3,27 +3,26 @@ Application's configuration module. Contains path configuration logics.
 Provides instance of Config class, this instance possesses fields representing passed console arguments.
 These fields are subsequently used to adjust the workflow of the application.
 """
-import argparse
 import logging
+import sys
+from configparser import ConfigParser
 from os import mkdir
 from pathlib import Path
 
 from rss_reader.argument_parser import ArgParser
 
-logger = logging.getLogger("rss-reader")
+config_logger = logging.getLogger("config")
+main_logger = logging.getLogger("rss-reader")
+
+# default application directory
+default_reader_dir_path = Path(Path.home(), "rss_reader")
 
 
-class Config:
-    """
-    Class, whose instances hold fields representing passed console arguments, path of the utility directory,
-    where cache file will be precisely stored. Also, by default, all feeds converted to supported formats are stored
-    by the exact same path, if corresponding arguments such like --to-html where not passed with other directory
-    path to redetermine where to save these files to.
-    """
+class Config(ArgParser, ConfigParser):
+    """Class, whose instances hold fields representing passed console arguments. It configures the application."""
 
-    def __init__(self, reader_dir_path: Path, cache_file_path: Path):
-        self.reader_dir_path = reader_dir_path
-        self.cache_file_path = cache_file_path
+    def __init__(self):
+        super(Config, self).__init__()
         self.source = None
         self.limit = None
         self.json = None
@@ -33,65 +32,220 @@ class Config:
         self.check_urls = None
         self.colorize = None
 
-    def load_cli(self, args: argparse.Namespace) -> None:
+        self.cache_file_path = None
+        self._log_dir_path = None
+        self._cache_dir_path = None
+
+    def _set_defaults(self, default_reader_dir_path_: Path):
+        """Sets default dir paths."""
+        global default_reader_dir_path
+        default_reader_dir_path = default_reader_dir_path_
+        self._log_dir_path = default_reader_dir_path_
+        self._cache_dir_path = default_reader_dir_path_
+        self.to_html_action.const = default_reader_dir_path_
+        self.to_pdf_action.const = default_reader_dir_path_
+        self.to_epub_action.const = default_reader_dir_path_
+
+    def _load_ini(self) -> None:
+        """Loads config from .ini file, which should be located in rss_reader package on the same level with
+        __main__.py ."""
+        self.read(Path(sys.path[0], "rss_reader.ini"))
+        if "rss-reader" not in self.sections() or not self["rss-reader"]:
+            config_logger.info(
+                ".ini file is not configured. Running with default settings..."
+            )
+            return
+
+        if default_dir_path := self["rss-reader"].get("DEFAULT_DIR_PATH", None):
+            if Config._is_ini_default_dir_path_valid(default_dir_path):
+                self._set_defaults(Path(default_dir_path))
+        if cache_dir_path := self["rss-reader"].get("CACHE_DIR_PATH", None):
+            self._cache_dir_path = Path(cache_dir_path)
+        if log_dir_path := self["rss-reader"].get("LOG_DIR_PATH", None):
+            self._log_dir_path = Path(log_dir_path)
+        if convert_dir_path := self["rss-reader"].get("CONVERT_DIR_PATH", None):
+            self.to_html_action.const = Path(convert_dir_path)
+            self.to_pdf_action.const = Path(convert_dir_path)
+            self.to_epub_action.const = Path(convert_dir_path)
+
+    def _set_verbose(self) -> None:
+        """Sets verbose mode if --verbose argument was passed."""
+        self.verbose = self.args.verbose
+
+    def _load_cli(self) -> None:
         """Loads command line arguments to config."""
-        self.source = args.source
-        self.limit = args.limit
-        self.json = args.json
-        self.verbose = args.verbose
-        self.cached = args.date
-        if args.to_html:
-            self.format.update(html=args.to_html)
-        if args.to_pdf:
-            self.format.update(pdf=args.to_pdf)
-        if args.to_epub:
-            self.format.update(epub=args.to_epub)
-        self.colorize = args.colorize
-        self.check_urls = args.check_urls
+        cli_args = self.args
+        self.source = cli_args.source
+        self.limit = cli_args.limit
+        self.json = cli_args.json
+        self.cached = cli_args.date
+        if cli_args.to_html:
+            self.format.update(html=cli_args.to_html)
+        if cli_args.to_pdf:
+            self.format.update(pdf=cli_args.to_pdf)
+        if cli_args.to_epub:
+            self.format.update(epub=cli_args.to_epub)
+        self.colorize = cli_args.colorize
+        self.check_urls = cli_args.check_urls
 
-    def setup(self, arg_parser: ArgParser) -> None:
+    @staticmethod
+    def _is_ini_default_dir_path_valid(dir_path) -> bool:
+        """Checks whether default dir path in .ini config is valid."""
+        try:
+            if not Path(dir_path).is_dir():
+                mkdir(dir_path)
+            return True
+        except Exception:
+            config_logger.warning(
+                f"DEFAULT_DIR_PATH={dir_path} in .ini file is invalid! Default dir path is preserved."
+            )
+            return False
+
+    @staticmethod
+    def _make_file(dir_path, file_name):
         """
-        Provides logics of initial user notification about possible activation of verbose and advanced url resolving
-        modes depending on incoming console arguments. Also validates whether either source url or date arguments
-        were passed by user.
+        Generic method to build directory and file with the given dir_path and file_name. The purpose of this method
+        is to handle possible exceptions connected with invalid paths specified either as cli arguments or inside
+        .ini file.
+
+        Raises
+        ------
+        PermissionError
+            if the user has not enough rights to create dir/file with the specified path
+
+        NotADirectoryError
+            if the specified dir_path is invalid
         """
+        if not Path(dir_path).is_dir():
+            mkdir(dir_path)
+        file_path = Path(dir_path, file_name)
+        Path(file_path).touch()
+
+    def _make_logs(self):
+        """
+        Makes logs directory both with rss_reader.log file. If the specified LOG_DIR_PATH in the .ini file was absent or
+        invalid, then logs' directory becomes DEFAULT_DIR_PATH from .ini file. But if then DEFAULT_DIR_PATH is either
+        absent or invalid in .ini file, then logs' directory becomes the default application directory.
+        """
+        try:
+            Config._make_file(self._log_dir_path, "rss_reader.log")
+        except (PermissionError, NotADirectoryError):
+            config_logger.warning(
+                f"'{self._log_dir_path}' is not a valid dir path for storing log file. Log file will be stored "
+                f"in '{default_reader_dir_path}'. "
+            )
+            Config._make_file(default_reader_dir_path, "rss_reader.log")
+
+    def _make_cache(self):
+        """
+        Makes cache directory both with cache.json file. If the specified CACHE_DIR_PATH in the .ini file was absent or
+        invalid, then cache's directory becomes DEFAULT_DIR_PATH from .ini file. But if then DEFAULT_DIR_PATH is either
+        absent or invalid in .ini file, then cache's directory becomes the default application directory.
+        """
+        try:
+            Config._make_file(self._cache_dir_path, "cache.json")
+            self.cache_file_path = Path(self._cache_dir_path, "cache.json")
+        except (PermissionError, NotADirectoryError):
+            config_logger.warning(
+                f"'{self._cache_dir_path}' is not a valid dir path for storing cache file. Cache file will be "
+                f"stored in '{default_reader_dir_path}'."
+            )
+            Config._make_file(default_reader_dir_path, "cache.json")
+            self.cache_file_path = Path(default_reader_dir_path, "cache.json")
+
+    def _make_convert_files(self):
+        r"""
+        Makes a directory for converted files specified in command line (e.g. --to-html, --to-pdf) and these files.
+
+        Command line arguments have the highest priority of choosing the converted files' folder
+        (e.g. if --to-html C:\\rss_reader2.0 is specified in cli, then it will be superior to
+        any other configurations made in .ini file).
+
+        After that, the converted files' directory resolution
+        order is the following, from highest to lowest priority: CONVERT_DIR_PATH->DEFAULT_DIR_PATH->default
+        application directory.
+        """
+        for f in self.format:
+            try:
+                Config._make_file(self.format[f], f"news.{f}")
+            except (PermissionError, NotADirectoryError):
+                config_logger.warning(
+                    f"'{f}' is not a valid dir path for storing converted files. Converted "
+                    f"files will be stored in '{default_reader_dir_path}'."
+                )
+                Config._make_file(default_reader_dir_path, f"news.{f}")
+
+    def _make_files(self):
+        """Makes all the necessary files for the application to work."""
+        self._make_logs()
+        self._make_cache()
+        self._make_convert_files()
+
+    def setup(self) -> None:
+        """
+        Public method of Config class, which does the whole configuration job:
+
+        - sets up the 'config' logger and the application 'rss-reader' logger;
+
+        - loads .ini file config;
+
+        - loads cli arguments;
+
+        - makes all the necessary files;
+
+        - provides logics of initial user notification about possible activation of verbose and advanced url
+        resolving modes depending on incoming console arguments;
+
+        - validates whether either source url or date arguments were passed by user.
+        """
+        self._set_verbose()
+
+        # if --verbose passed, config logs are printed to console
         if self.verbose:
-            formatter = logging.Formatter(
-                "[%(levelname)s] %(asctime)s (%(funcName)s) = %(message)s"
-            )
-            logger.setLevel("DEBUG")
-            s_handler = logging.StreamHandler()
-            s_handler.setFormatter(formatter)
-            logger.addHandler(s_handler)
-            logger.info("Enabled verbose mode.")
+            config_logger.setLevel("DEBUG")
+
+        formatter = logging.Formatter(
+            "[%(levelname)s] %(asctime)s [%(name)s] (%(module)s.py:%(funcName)s) = %(message)s"
+        )
+        s_handler = logging.StreamHandler()
+        s_handler.setFormatter(formatter)
+
+        config_logger.addHandler(s_handler)
+
+        # setting default paths
+        self._set_defaults(default_reader_dir_path)
+        # loading .ini file
+        self._load_ini()
+        # loading cli arguments after setting default values for --to-html, --to-pdf, --to-epub when
+        # they are not given path
+        self._load_cli()
+        # trying to create necessary dirs and files after setting paths passed from .ini config;
+        # if it's not possible for some reason, then warning about file storage redirection is shown
+        self._make_files()
+
+        f_handler = logging.FileHandler(
+            Path(self._log_dir_path, "rss_reader.log"), mode="a"
+        )
+        f_handler.setFormatter(formatter)
+        f_handler.setLevel("INFO")
+
+        # main logger's logs are always printed to .log file
+        main_logger.addHandler(s_handler)
+        main_logger.addHandler(f_handler)
+
+        if self.verbose:
+            main_logger.setLevel("DEBUG")
+            main_logger.info("Enabled verbose mode.")
         else:
-            logger.addHandler(logging.NullHandler())
-            logger.propagate = False
+            main_logger.addHandler(logging.NullHandler())
+            main_logger.propagate = False
         if not self.source and not self.cached:
-            arg_parser.parser.error(
-                "Neither [source], nor [--date DATE] args were passed!"
-            )
+            argp_err_msg = "Neither [source], nor [--date DATE] args were passed!"
+            main_logger.error(argp_err_msg)
+            self.parser.error(argp_err_msg)
         if self.check_urls and not self.cached:
-            logger.info("Enabled advanced url resolving mode.")
+            main_logger.info("Enabled advanced url resolving mode.")
 
 
-_arg_parser = ArgParser()
-
-_reader_dir_path = Path(Path.home(), "rss_reader")
-
-if not _reader_dir_path.is_dir():
-    mkdir(_reader_dir_path)
-
-# setting up default save path for supported types of feeds' conversion
-_arg_parser.to_html_action.const = _reader_dir_path
-_arg_parser.to_pdf_action.const = _reader_dir_path
-_arg_parser.to_epub_action.const = _reader_dir_path
-
-_cache_file_path = Path(_reader_dir_path, "cache.json")
-
-if not _cache_file_path.is_file():
-    Path(_cache_file_path).touch()
-
-config = Config(_reader_dir_path, _cache_file_path)
-config.load_cli(_arg_parser.args)
-config.setup(_arg_parser)
+config = Config()
+config.setup()

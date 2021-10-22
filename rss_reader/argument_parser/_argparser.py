@@ -6,6 +6,7 @@ class ArgParser:
     """Class parsing console arguments."""
 
     def __init__(self):
+        super(ArgParser, self).__init__()
         self.parser = argparse.ArgumentParser(
             prog="markedrss",
             description="Pure Python command-line RSS reader.",

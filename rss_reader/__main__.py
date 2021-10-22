@@ -6,7 +6,7 @@ from pathlib import Path
 
 # add rss_reader package path to sys.path
 rss_reader_pkg_path = str(Path(__file__).parent.parent.resolve())
-sys.path.insert(0, rss_reader_pkg_path)
+sys.path.insert(1, rss_reader_pkg_path)
 
 
 import logging
@@ -25,7 +25,7 @@ def main():
     except NewsNotFoundError as e:
         logger.info(e)
     except Exception as e:
-        # logger.exception(e)
+        logger.exception(e)
         print(f"Rss reader crashed from {type(e).__name__}")
     finally:
         if not config.verbose:
