@@ -106,9 +106,9 @@ class Config(ArgParser, ConfigParser):
     @staticmethod
     def _make_file(dir_path: Path, file_name: str) -> None:
         """
-        Generic method to build directory and file with the given dir_path and file_name. The purpose of this method
-        is to handle possible exceptions connected with invalid paths specified either as cli arguments or inside
-        .ini file.
+        Generic method to build directory and file with the given dir_path and file_name. If file already exists,
+        then nothing is done. The purpose of this method is to handle possible exceptions connected with invalid
+        paths specified either as cli arguments or inside .ini file.
 
         Raises
         ------
