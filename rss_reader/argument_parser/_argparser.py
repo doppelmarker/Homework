@@ -13,51 +13,67 @@ class ArgParser:
             formatter_class=lambda prog: argparse.HelpFormatter(
                 prog, max_help_position=30
             ),
+            add_help=False,
+        )
+        self.parser.add_argument(
+            "-h",
+            "--help",
+            action="help",
+            default=argparse.SUPPRESS,
+            help="Show this help message and exit.",
         )
         self.parser.add_argument("source", nargs="?", default=None, help="RSS URL")
         self.parser.add_argument(
-            "--version", help="Print version info", action="version", version="3.2.1"
+            "-v",
+            "--version",
+            help="Print version info.",
+            action="version",
+            version="3.2.1",
         )
         self.parser.add_argument(
+            "--verbose", help="Output verbose status messages.", action="store_true"
+        )
+        self.parser.add_argument(
+            "-c",
+            "--colorize",
+            help="Print news in colorized mode.",
+            action="store_true",
+        )
+        self.parser.add_argument(
+            "-l",
             "--limit",
-            help="Limit news topics if this parameter provided",
+            help="Limit news topics if this parameter provided.",
             type=int,
             default=-2,
         )
         self.parser.add_argument(
-            "--json", help="Print result as JSON in stdout", action="store_true"
+            "--json", help="Print result as JSON.", action="store_true"
         )
         self.parser.add_argument(
-            "--verbose", help="Output verbose status messages", action="store_true"
-        )
-        self.parser.add_argument(
-            "--date", help="Print news published on a specific date"
+            "-d", "--date", help="Print cached news published on a specific date."
         )
         self.to_html_action = self.parser.add_argument(
             "--to-html",
             nargs="?",
-            help="Convert news to .html format and save them by the specified folder path",
+            help="Convert news to .html format and save it by the specified folder path.",
             metavar="FOLDER_PATH",
         )
         self.to_pdf_action = self.parser.add_argument(
             "--to-pdf",
             nargs="?",
-            help="Convert news to .pdf format and save them by the specified folder path",
+            help="Convert news to .pdf format and save it by the specified folder path.",
             metavar="FOLDER_PATH",
         )
         self.to_epub_action = self.parser.add_argument(
             "--to-epub",
             nargs="?",
-            help="Convert news to .epub format and save them by the specified folder path",
+            help="Convert news to .epub format and save it by the specified folder path.",
             metavar="FOLDER_PATH",
         )
         self.parser.add_argument(
-            "--colorize", help="Print news in colorized mode", action="store_true"
-        )
-        self.parser.add_argument(
             "--check-urls",
-            help="Ensure url represents an image (requires installation of additional dependency, use: pip install "
-            "markedrss[aiohttp])",
+            help="Ensure URL represents an image (requires installation of additional dependency, use: pip install "
+            "markedrss[aiohttp]).",
             action="store_true",
         )
 
