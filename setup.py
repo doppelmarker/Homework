@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="markedrss",
-    version="3.2.1",
+    version="3.2.2",
     author="doppelmarker",
     author_email="doppelmarker@gmail.com",
     url="https://github.com/doppelmarker/Homework",

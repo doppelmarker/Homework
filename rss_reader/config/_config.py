@@ -33,6 +33,7 @@ class Config(ArgParser, ConfigParser):
         self.format = {}
         self.check_urls = None
         self.colorize = None
+        self.clear_cache = None
 
         self.cache_file_path = None
         self._log_dir_path = None
@@ -89,6 +90,7 @@ class Config(ArgParser, ConfigParser):
             self.format.update(epub=cli_args.to_epub)
         self.colorize = cli_args.colorize
         self.check_urls = cli_args.check_urls
+        self.clear_cache = cli_args.clear_cache
 
     @staticmethod
     def _is_ini_default_dir_path_valid(dir_path: Path) -> bool:
@@ -97,7 +99,7 @@ class Config(ArgParser, ConfigParser):
             if not Path(dir_path).is_dir():
                 mkdir(dir_path)
             return True
-        except Exception:
+        except OSError:
             config_logger.warning(
                 f"DEFAULT_DIR_PATH={dir_path} in .ini file is invalid! Default dir path is preserved."
             )
@@ -131,7 +133,7 @@ class Config(ArgParser, ConfigParser):
         """
         try:
             Config._make_file(self._log_dir_path, "rss_reader.log")
-        except (PermissionError, NotADirectoryError):
+        except OSError:
             config_logger.warning(
                 f"'{self._log_dir_path}' is not a valid dir path for storing log file. Log file will be stored "
                 f"in '{default_reader_dir_path}'. "
@@ -147,13 +149,19 @@ class Config(ArgParser, ConfigParser):
         try:
             Config._make_file(self._cache_dir_path, "cache.json")
             self.cache_file_path = Path(self._cache_dir_path, "cache.json")
-        except (PermissionError, NotADirectoryError):
+        except OSError:
             config_logger.warning(
                 f"'{self._cache_dir_path}' is not a valid dir path for storing cache file. Cache file will be "
                 f"stored in '{default_reader_dir_path}'."
             )
             Config._make_file(default_reader_dir_path, "cache.json")
             self.cache_file_path = Path(default_reader_dir_path, "cache.json")
+
+        if self.clear_cache:
+            open(self.cache_file_path, "w").close()
+            config_logger.info(
+                f"Cache file in {self.cache_file_path} has been successfully cleared!"
+            )
 
     def _make_convert_files(self) -> None:
         r"""
@@ -170,7 +178,7 @@ class Config(ArgParser, ConfigParser):
         for f in self.format:
             try:
                 Config._make_file(self.format[f], f"news.{f}")
-            except (PermissionError, NotADirectoryError):
+            except OSError:
                 config_logger.warning(
                     f"'{f}' is not a valid dir path for storing converted files. Converted "
                     f"files will be stored in '{default_reader_dir_path}'."
@@ -219,30 +227,42 @@ class Config(ArgParser, ConfigParser):
         # loading .ini file
         self._load_ini()
         # loading cli arguments after setting default values for --to-html, --to-pdf, --to-epub when
-        # they are not given path
+        # they are not given paths in console
         self._load_cli()
         # trying to create necessary dirs and files after setting paths passed from .ini config;
         # if it's not possible for some reason, then warning about file storage redirection is shown
         self._make_files()
 
+        if not self.source and not self.cached:
+            # passing --clear-cache without source or --date is considered to be a normal behaviour
+            if self.clear_cache:
+                print(
+                    "Program finished after clearing cache because neither [source], nor [--date DATE] args "
+                    "were passed."
+                )
+                if not self.verbose:
+                    print("For more details consider using --verbose")
+                self.parser.exit()
+
+            self.parser.error("Neither [source], nor [--date DATE] args were passed!")
+
         f_handler = logging.FileHandler(
             Path(self._log_dir_path, "rss_reader.log"), mode="a"
         )
         f_handler.setFormatter(formatter)
+        # main logger's logs are always printed to .log file
         f_handler.setLevel("INFO")
 
-        # main logger's logs are always printed to .log file
         main_logger.addHandler(s_handler)
         main_logger.addHandler(f_handler)
 
-        if not self.source and not self.cached:
-            self.parser.error("Neither [source], nor [--date DATE] args were passed!")
         if self.verbose:
             main_logger.setLevel("INFO")
             main_logger.info("Enabled verbose mode.")
         else:
             main_logger.addHandler(logging.NullHandler())
             main_logger.propagate = False
+
         if self.check_urls and not self.cached:
             main_logger.info("Enabled advanced URL resolving mode.")
 

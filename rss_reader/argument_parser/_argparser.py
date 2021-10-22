@@ -28,7 +28,7 @@ class ArgParser:
             "--version",
             help="Print version info.",
             action="version",
-            version="3.2.1",
+            version="3.2.2",
         )
         self.parser.add_argument(
             "--verbose", help="Output verbose status messages.", action="store_true"
@@ -37,6 +37,11 @@ class ArgParser:
             "-c",
             "--colorize",
             help="Print news in colorized mode.",
+            action="store_true",
+        )
+        self.parser.add_argument(
+            "--clear-cache",
+            help="Clear cache file on startup.",
             action="store_true",
         )
         self.parser.add_argument(
