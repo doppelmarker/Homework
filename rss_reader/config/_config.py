@@ -1,6 +1,6 @@
 """
 Application's configuration module. Contains path configuration logics.
-Provides instance of Config class, this instance possesses fields representing passed console arguments.
+Provides Config class, its instance possesses fields representing passed console arguments.
 These fields are subsequently used to adjust the workflow of the application.
 """
 import logging
@@ -250,7 +250,7 @@ class Config(ArgParser, ConfigParser):
             Path(self._log_dir_path, "rss_reader.log"), mode="a"
         )
         f_handler.setFormatter(formatter)
-        # main logger's logs are always printed to .log file
+        # main logger's logs higher than 'WARNING' are always printed to .log file
         f_handler.setLevel("INFO")
 
         main_logger.addHandler(s_handler)
@@ -265,7 +265,3 @@ class Config(ArgParser, ConfigParser):
 
         if self.check_urls and not self.cached:
             main_logger.info("Enabled advanced URL resolving mode.")
-
-
-config = Config()
-config.setup()

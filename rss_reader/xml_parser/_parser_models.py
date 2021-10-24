@@ -39,7 +39,8 @@ class Element(BaseModel):
             yield from child.find_all(tag_name)
 
     def find(self, tag_name: str) -> "Element":
-        """Returns the next element with the given tag_name in the subtree relatively to the current one."""
+        """Returns the next element with the given tag_name in the subtree relatively to the current one. Returns an
+        empty Element if not found."""
         for child in self.children:
             if child.tag_name == tag_name:
                 return child
@@ -50,6 +51,7 @@ class Element(BaseModel):
                     return next_child
             except AttributeError:
                 pass
+        return Element()
 
     def find_urls(self):
         """Generator method yielding all URLs in the subtree of the given element. Element's text for URL presence is
@@ -82,3 +84,16 @@ class Element(BaseModel):
 
     def __repr__(self):
         return f"<{self.tag_name}>"
+
+    def __eq__(self, other: "Element"):
+        if (
+            self.tag_name == other.tag_name
+            and self.attributes == other.attributes
+            and self.text == other.text
+        ):
+            for self_child, other_child in zip(self.children, other.children):
+                if self_child != other_child:
+                    return False
+            return True
+        else:
+            return False

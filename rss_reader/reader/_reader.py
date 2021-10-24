@@ -3,7 +3,7 @@ import logging
 from html import unescape
 from typing import List
 
-from requests import exceptions, get
+from requests import Response, exceptions, get
 
 from rss_reader.config import Config
 from rss_reader.converter import Converter
@@ -33,7 +33,7 @@ class Reader:
         self.config = config
 
     @staticmethod
-    def _is_rss(grabbed):
+    def _is_rss(grabbed: Response):
         """Method defining whether grabbed content represents RSS channel."""
         for rss_mime_type in Reader.rss_mime_types:
             if rss_mime_type in grabbed.headers["content-type"]:

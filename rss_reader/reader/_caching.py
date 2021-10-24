@@ -17,8 +17,6 @@ logger = logging.getLogger("rss-reader")
 class NewsNotFoundError(Exception):
     """Raised whenever news was not found in cache file."""
 
-    pass
-
 
 class NewsCache:
     """
@@ -73,12 +71,9 @@ class NewsCache:
                     json_dict = dict()
 
                 feed_head = feed.dict(exclude={"items"})
-                if (
-                    json_dict
-                    and self.source in json_dict
-                    and feed_head not in json_dict[self.source]
-                ):
-                    json_dict[self.source].append(feed_head)
+                if json_dict and self.source in json_dict:
+                    if feed_head not in json_dict[self.source]:
+                        json_dict[self.source].insert(0, feed_head)
                 else:
                     json_dict[self.source] = list()
                     json_dict[self.source].append(feed_head)

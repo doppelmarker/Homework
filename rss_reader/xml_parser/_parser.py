@@ -2,6 +2,7 @@
 import logging
 from collections import deque
 
+from ._parser_models import Element
 from ._tokenizer import Tokenizer, TokenType, XMLError
 
 logger = logging.getLogger("rss-reader")
@@ -40,7 +41,7 @@ class Parser:
         finally:
             tokenizer.xml_io.close()
 
-    def parse(self):
+    def parse(self) -> Element:
         """Public method providing an interface for parsing XML."""
         tokenizer = Tokenizer(self.xml)
 

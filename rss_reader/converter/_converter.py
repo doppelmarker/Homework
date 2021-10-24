@@ -47,7 +47,12 @@ class Converter:
 
         try:
             with open(file_path, "w", encoding="utf-8") as result_file:
-                result_file.write(self._get_html(feeds=feeds))
+                result_file.write(
+                    self._get_html(
+                        feeds=feeds,
+                        fonts=str(Path(Path(__file__).parent.resolve(), "fonts")),
+                    )
+                )
         except FileNotFoundError:
             logger.warning(
                 f"Failed to save html file. Seems directory {dir_path} doesn't exist."
@@ -67,7 +72,11 @@ class Converter:
                 logger.info("Converting feeds to pdf...")
 
                 pisa_status = pisa.CreatePDF(
-                    self._get_html(feeds=feeds), dest=result_file
+                    self._get_html(
+                        feeds=feeds,
+                        fonts=str(Path(Path(__file__).parent.resolve(), "fonts")),
+                    ),
+                    dest=result_file,
                 )
 
                 if pisa_status.err:

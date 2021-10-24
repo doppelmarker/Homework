@@ -11,7 +11,7 @@ sys.path.insert(1, rss_reader_pkg_path)
 
 import logging
 
-from rss_reader.config import config
+from rss_reader.config import Config
 from rss_reader.reader import NewsNotFoundError, Reader
 
 logger = logging.getLogger("rss-reader")
@@ -19,6 +19,9 @@ logger = logging.getLogger("rss-reader")
 
 def main():
     """Main function, called when running the exported CLI utility or straightforwardly this module."""
+    config = Config()
+    config.setup()
+
     reader = Reader(config)
     try:
         reader.start()

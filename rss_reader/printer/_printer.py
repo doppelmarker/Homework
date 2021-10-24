@@ -52,7 +52,7 @@ class NewsPrinter:
                     print(f"Author: {item.author}", end="\n\n   ")
                 if item.pubDate:
                     print(f"Publication date: {item.pubDate}", end="\n\n   ")
-                if item.links:
+                if any(item.links.values()):
                     print(f"Links:", end="\n")
                     for name, named_links in item.links.items():
                         if named_links:

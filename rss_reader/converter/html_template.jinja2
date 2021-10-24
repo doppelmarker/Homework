@@ -6,6 +6,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>News</title>
     <style>
+        @font-face {
+            font-family: DejaVuSans;
+            src: url("{{ fonts + "\DejaVuSans.ttf" }}");
+        }
+
+        @font-face {
+            font-family: DejaVuSans;
+            src: url("{{ fonts + "\DejaVuSans-Bold.ttf" }}");
+            font-weight: bold;
+        }
+
+        @font-face {
+            font-family: DejaVuSans;
+            src: url("{{ fonts + "\DejaVuSans-Oblique.ttf" }}");
+            font-style: italic, oblique;
+        }
+
+        @font-face {
+            font-family: DejaVuSans;
+            src: url("{{ fonts + "\DejaVuSans-BoldOblique.ttf" }}");
+            font-weight: bold;
+            font-style: italic, oblique;
+        }
+
+        body {
+            -pdf-word-wrap: CJK;
+            font-family: DejaVuSans;
+        }
+
+
         header {
             padding: 2rem;
         }
