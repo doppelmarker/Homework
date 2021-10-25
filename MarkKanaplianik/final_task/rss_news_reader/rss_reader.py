@@ -8,8 +8,8 @@ sys.path.insert(1, rss_reader_pkg_dir_path)
 
 import logging
 
-from config import Config
-from reader import NewsNotFoundError, Reader
+from rss_news_reader.config import Config
+from rss_news_reader.reader import NewsNotFoundError, Reader
 
 logger = logging.getLogger("rss-news-reader")
 
