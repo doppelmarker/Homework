@@ -6,6 +6,8 @@ Final task for EPAM Python Training 2021.09
 
 `rss-news-reader` is a command line utility that makes it easy to view RSS feeds in a readable format.
 
+***Python 3.9 required***
+
 ## Installation and usage
 
 You can install it by running the following command:
