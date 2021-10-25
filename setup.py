@@ -1,4 +1,12 @@
+import os
+
 from setuptools import find_packages, setup
+
+
+def read(file_name):
+    with open(os.path.join(os.path.dirname(__file__), file_name)) as file:
+        return file.read()
+
 
 setup(
     name="markedrss",
@@ -7,7 +15,7 @@ setup(
     author_email="doppelmarker@gmail.com",
     url="https://github.com/doppelmarker/Homework",
     description="Pure Python command-line RSS reader",
-    long_description="Pure Python command-line RSS reader",
+    long_description=read("README.md"),
     python_requires=">=3.9",
     license="MIT",
     packages=find_packages(),
