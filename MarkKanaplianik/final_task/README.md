@@ -287,7 +287,7 @@ In order to run tests, please, install dependencies:
 
     pip install pytest pytest-cov
 
-And use the following command:
+Then, provided, `/Homework/MarkKanaplianik/final_task` is your current directory, please, use the following command:
 
     pytest --cov=rss_news_reader tests/
 
