@@ -30,8 +30,8 @@ setup(
     },
     entry_points={
         "console_scripts": [
-            "rss-reader=rss_news_reader.rss_news_reader:main",
-            "rss-news-reader=rss_news_reader.rss_news_reader:main"
+            "rss-reader=rss_news_reader.rss_reader:main",
+            "rss-news-reader=rss_news_reader.rss_reader:main"
         ],
     },
 )
