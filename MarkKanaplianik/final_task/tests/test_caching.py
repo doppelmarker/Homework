@@ -1,11 +1,13 @@
+"""Tests for _caching.py module. Failed tests result in newly created files, their difference comparing to
+expected file then may be explored."""
 import json
 import os
 from pathlib import Path
 
 import pytest
 
-from MarkKanaplianik.final_task.rss_news_reader.reader import NewsCache, NewsNotFoundError
-from MarkKanaplianik.final_task.rss_news_reader.rss_builder import Feed, Item
+from rss_news_reader.reader import NewsCache, NewsNotFoundError
+from rss_news_reader.rss_builder import Feed, Item
 
 EMPTY_FILE_NAME = "empty_tested_cache.json"
 COMPLETE_FILE_NAME = "complete_tested_cache.json"
@@ -134,12 +136,12 @@ def damaged_cache_obj():
     ],
 )
 def test_get_parsed_date_from_datetime_obj_positive(
-    bare_cache_obj, test_date_format, parsed_date
+        bare_cache_obj, test_date_format, parsed_date
 ):
     datetime_obj = bare_cache_obj._get_datetime_obj(test_date_format)
     assert (
-        f"{datetime_obj.year}{datetime_obj.month:02d}{datetime_obj.day:02d}"
-        == parsed_date
+            f"{datetime_obj.year}{datetime_obj.month:02d}{datetime_obj.day:02d}"
+            == parsed_date
     )
 
 
@@ -155,7 +157,7 @@ def test_cache_news_path_raises_FileNotFoundError_if_no_file(sample_feed):
 
 
 def test_cache_news_empty_cache(
-    cache_obj, sample_feed, empty_cache_file, expected_complete_cache_content
+        cache_obj, sample_feed, empty_cache_file, expected_complete_cache_content
 ):
     cache_obj.cache_news(sample_feed)
     empty_cache_file.seek(0)
@@ -165,7 +167,7 @@ def test_cache_news_empty_cache(
 
 
 def test_cache_news_complete_cache(
-    sample_feed, complete_cache_file, expected_complete_cache_content
+        sample_feed, complete_cache_file, expected_complete_cache_content
 ):
     """Nothing should change in cache file, if already cached news is similar to one which is going to be cached."""
 
@@ -179,7 +181,7 @@ def test_cache_news_complete_cache(
 
 
 def test_cache_news_damaged_cache(
-    damaged_cache_obj, sample_feed, damaged_cache_file, expected_complete_cache_content
+        damaged_cache_obj, sample_feed, damaged_cache_file, expected_complete_cache_content
 ):
     damaged_cache_obj.cache_news(sample_feed)
     damaged_cache_file.seek(0)
@@ -189,7 +191,7 @@ def test_cache_news_damaged_cache(
 
 
 def test_cache_news_no_head_in_cache(
-    sample_feed, no_head_cache_file, expected_complete_cache_content
+        sample_feed, no_head_cache_file, expected_complete_cache_content
 ):
     NewsCache(Path(NO_HEAD_FILE_NAME), "https://news.yahoo.com/rss/").cache_news(
         sample_feed
@@ -201,10 +203,10 @@ def test_cache_news_no_head_in_cache(
 
 
 def test_cache_news_no_source(
-    sample_feed,
-    no_source_cache_file,
-    expected_complete_cache_content,
-    other_source_file_content,
+        sample_feed,
+        no_source_cache_file,
+        expected_complete_cache_content,
+        other_source_file_content,
 ):
     NewsCache(Path(NO_SOURCE_FILE_NAME), "https://news.yahoo.com/rss/").cache_news(
         sample_feed
@@ -221,7 +223,7 @@ def test_get_cached_news_raises_FileNotFoundError_if_no_file():
 
 
 def test_get_cached_news_raises_NewsNotFoundError_if_empty_cache(
-    cache_obj, empty_cache_file
+        cache_obj, empty_cache_file
 ):
     with pytest.raises(NewsNotFoundError):
         cache_obj.get_cached_news("any date", 1)
@@ -230,7 +232,7 @@ def test_get_cached_news_raises_NewsNotFoundError_if_empty_cache(
 
 
 def test_get_cached_news_raises_NewsNotFoundError_if_damaged_cache(
-    damaged_cache_obj, damaged_cache_file
+        damaged_cache_obj, damaged_cache_file
 ):
     with pytest.raises(NewsNotFoundError):
         damaged_cache_obj.get_cached_news("any date", 1)
@@ -239,7 +241,7 @@ def test_get_cached_news_raises_NewsNotFoundError_if_damaged_cache(
 
 
 def test_get_cached_news_all_items_with_specified_date(
-    complete_cache_file, sample_feed, expected_complete_cache_content
+        complete_cache_file, sample_feed, expected_complete_cache_content
 ):
     cache = NewsCache(Path(COMPLETE_FILE_NAME), "https://news.yahoo.com/rss/")
 
@@ -249,7 +251,7 @@ def test_get_cached_news_all_items_with_specified_date(
 
 
 def test_get_cached_news_no_news_found_with_specified_date_raises_NoNewsFoundError(
-    complete_cache_file, expected_complete_cache_content
+        complete_cache_file, expected_complete_cache_content
 ):
     cache = NewsCache(Path(COMPLETE_FILE_NAME), "https://news.yahoo.com/rss/")
 

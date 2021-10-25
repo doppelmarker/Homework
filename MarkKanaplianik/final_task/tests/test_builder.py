@@ -1,7 +1,8 @@
+"""Tests for _builder.py module."""
 import pytest
 
-from MarkKanaplianik.final_task.rss_news_reader.rss_builder import Feed, Item, RSSBuilder
-from MarkKanaplianik.final_task.rss_news_reader.xml_parser import Attribute, Element
+from rss_news_reader.rss_builder import Feed, Item, RSSBuilder
+from rss_news_reader.xml_parser import Attribute, Element
 
 
 @pytest.fixture

@@ -1,6 +1,7 @@
+"""Tests for _parser.py module."""
 import pytest
 
-from MarkKanaplianik.final_task.rss_news_reader.xml_parser import Attribute, Element, Parser
+from rss_news_reader.xml_parser import Attribute, Element, Parser
 
 
 @pytest.fixture
@@ -51,6 +52,7 @@ def expected_dom(expected_attrs, add_tag):
 
 
 def test_parser(common_xml_to_parse, expected_dom):
+    """Tests dom validity obtained after XML parsing."""
     parser = Parser(common_xml_to_parse)
 
     actual_dom = parser.parse()
