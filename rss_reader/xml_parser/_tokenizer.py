@@ -171,7 +171,8 @@ class Tokenizer:
                 counter_right_bracket += 1
 
         cdata_html = cdata.removeprefix("<![CDATA[").removesuffix("]]>").strip()
-        self.cdata_tokenizer = Tokenizer(cdata_html)
+        # if cdata was empty, put a whitespace in order to avoid EmptyXMLError
+        self.cdata_tokenizer = Tokenizer(cdata_html if cdata_html else " ")
         self.token_type = TokenType.CDATA
 
     def _parse_text(self):
