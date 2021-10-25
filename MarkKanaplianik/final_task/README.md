@@ -1,24 +1,50 @@
+[![PyPI version](https://badge.fury.io/py/rss-news-reader.svg)](https://badge.fury.io/py/rss-news-reader)
+
 # Python RSS reader
 
 Final task for EPAM Python Training 2021.09
 
-`markedrss` is a command line utility that makes it easy to view RSS feeds in a readable format.
+`rss-news-reader` is a command line utility that makes it easy to view RSS feeds in a readable format.
 
-## Installation
+## Installation and usage
 
 You can install it by running the following command:
 
-    pip install markedrss
+    pip install rss-news-reader
 
-In order to install additional dependency to make `--check-urls` work, please, use the following command:
+Now, you can run the utility in two ways:
 
-    pip install markedrss[aiohttp]
+    rss-news-reader {YOUR ARGUMENTS}
+    rss-reader {YOUR ARGUMENTS} 
 
-## Usage
+*OR*
 
-To see help message, please, use `-h/--help` argument: `markedrss -h`.
+1. Clone github repository:
 
-    usage: markedrss [-h] [-v] [--verbose] [-c] [--clear-cache] [-l LIMIT] [--json] [-d DATE] [--to-html [FOLDER_PATH]] [--to-pdf [FOLDER_PATH]] [--to-epub [FOLDER_PATH]] [--check-urls]
+       git clone https://github.com/doppelmarker/Homework
+
+2. Change directory to `/Homework/MarkKanaplianik/final_task`.
+
+       cd .../Homework/MarkKanaplianik/final_task
+
+3. Install necessary dependencies:
+
+       pip install -r requirements.txt
+
+Now, provided, your current directory is `/Homework/MarkKanaplianik/final_task`, you can run `rss_news_reader` as a
+package:
+
+    python rss_news_reader
+    python -m rss_news_reader
+
+or, provided, your current directory is `/Homework/MarkKanaplianik/final_task/rss_news_reader`, you can directly run the
+module:
+
+    python rss_reader.py
+
+To see help message, please, use `-h/--help` argument: `rss-news-reader -h`.
+
+    usage: rss-news-reader [-h] [-v] [--verbose] [-c] [--clear-cache] [-l LIMIT] [--json] [-d DATE] [--to-html [FOLDER_PATH]] [--to-pdf [FOLDER_PATH]] [--to-epub [FOLDER_PATH]] [--check-urls]
                  [source]
 
     Pure Python command-line RSS reader.
@@ -42,25 +68,37 @@ To see help message, please, use `-h/--help` argument: `markedrss -h`.
 
 *Some notes*:
 
++ ***IMPORTANT***: `rss-news-reader` utility name was chosen, because `rss-reader` was already taken
+  on https://pypi.org/. However, it is still possible to utilize the application using `rss-reader` word:
+
+      rss-reader {YOUR ARGUMENTS}    
+
 + when `--clear-cache` is passed individually, cache gets cleared and application terminates;
 + `--check-urls` requires internet connection; without passing this argument some URLs representing images may be
   ascribed to `others` category of resulting converted files.
+
+### Additional dependencies
+
+In order to install additional dependency to make `--check-urls` work, please, use the following command:
+
+    pip install aiohttp
 
 ## Logging
 
 There are 2 loggers:
 
-+ general `rss-reader` application logger;
++ general `rss-news-reader` application logger;
 + `config` logger.
 
-Messages with either `WARNING` or `ERROR` severities are ***always*** printed to `rss_reader.log` file.
+Messages with either `WARNING` or `ERROR` severities are ***always*** printed to `rss_news_reader.log` file.
 
 `config` logs are only printed to console.
 
 If `--verbose` argument is ***NOT*** passed, then only messages with either `WARNING` or `ERROR` severities
-of `rss_reader` are printed to console, `config` logs are not printed to console.
+of `rss_news_reader` are printed to console, `config` logs are not printed to console.
 
-If `--verbose` argument is passed, then all `rss_reader` logs are printed both to console and log file, while `config`
+If `--verbose` argument is passed, then all `rss_news_reader` logs are printed both to console and log file,
+while `config`
 logs are printed to console.
 
 ## Configuration
@@ -68,17 +106,17 @@ logs are printed to console.
 Application creates several files:
 
 + `cache.json`;
-+ `rss_reader.log`;
++ `rss_news_reader.log`;
 + converted to supported formats files: `news.html`/`pdf`/`epub`
 
 By default, the application files are stored in the home directory:
 
-    - Windows: C:\Users\User\rss_reader
-    - Linux: /home/username/rss_reader
+    - Windows: C:\Users\User\rss_news_reader
+    - Linux: /home/username/rss_news_reader
 
-You can change this by adding `rss_reader.ini` file inside `rss_reader` package.
+You can change this by adding `rss_news_reader.ini` file inside `rss_news_reader` package.
 
-The structure of `rss_reader.ini` file is the following:
+The structure of `rss_news_reader.ini` file is the following:
 
     [rss-reader]
     DEFAULT_DIR_PATH =
@@ -88,7 +126,7 @@ The structure of `rss_reader.ini` file is the following:
 
 The directory path resolution order for storing files, *from lowest to highest priority*, can be found below.
 
-For `rss_reader.log` file:
+For `rss_news_reader.log` file:
 
     home directory -> DEFAULT_DIR_PATH -> LOG_DIR_PATH 
 
@@ -100,8 +138,8 @@ For converted to supported formats files like news.`html`/`pdf`/`epub`:
 
     home directory -> DEFAULT_DIR_PATH -> CONVERT_DIR_PATH -> command line arguments 
 
-If `rss_reader.ini` file was given an invalid path or the path was empty, then the directory path gets resolved in the
-reversed order.
+If `rss_news_reader.ini` file was given an invalid path or the path was empty, then the directory path gets resolved in
+the reversed order.
 
 ## Cache JSON structure
 
@@ -202,20 +240,23 @@ implemented without respect to the feeds they belong to, but in this case it wou
 
 ## Parsing XML
 
-XML is parsed by parser implemented from scratch, it exploits the idea of *tokenization* of XML, then dom-tree is created from tokens.
+XML is parsed by parser implemented from scratch, it exploits the idea of *tokenization* of XML, then dom-tree is
+created from tokens.
 
 *Features*:
-+ XML CDATA parsing support: whenever CDATA is encountered in XML, it gets recursively parsed and substituted by a normal text in the final form.
-\
-XML CDATA example link: https://rss.art19.com/apology-line
-+ detecting invalid XML: parser notifies user with a wide range of messages whenever invalid syntax or some mistake was encountered in XML document.
-\
-Invalid XML example: https://feedforall.com/sample.xml
-\
-Its fragment:
+
++ XML CDATA parsing support: whenever CDATA is encountered in XML, it gets recursively parsed and substituted by a
+  normal text in the final form.
+  \
+  XML CDATA example link: https://rss.art19.com/apology-line
++ detecting invalid XML: parser notifies user with a wide range of messages whenever invalid syntax or some mistake was
+  encountered in XML document.
+  \
+  Invalid XML example: https://feedforall.com/sample.xml
+  \
+  Its fragment:
 
       <i><font color="#0000FF">Homework Assignments <br> School Cancellations <br> Calendar of Events <br> Sports Scores <br> Clubs/Organization Meetings <br> Lunches Menus </i></font>
-
 
 ## Tested RSS links
 
@@ -232,10 +273,10 @@ Its fragment:
 + https://lenta.ru/rss/top7
 + https://www.liga.net/tech/battles/rss.xml
 
-
 ## Testing
 
 Modules tested:
+
 + _caching.py
 + _builder.py
 + _parser.py
@@ -246,11 +287,9 @@ In order to run tests, please, install dependencies:
 
     pip install pytest pytest-cov
 
-
 And use the following command:
 
-    pytest --cov=rss_reader tests/
-
+    pytest --cov=rss_news_reader tests/
 
 ## Known problems:
 

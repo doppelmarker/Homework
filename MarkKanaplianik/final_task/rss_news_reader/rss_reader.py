@@ -1,24 +1,21 @@
-"""
-Main module, contains entry point to the rss_reader.
-"""
+"""Main module, contains entry point to the rss_news_reader."""
 import sys
 from pathlib import Path
 
-# add rss_reader package path to sys.path
-rss_reader_pkg_path = str(Path(__file__).parent.parent.resolve())
-sys.path.insert(1, rss_reader_pkg_path)
-
+# add rss_news_reader package's directory path to sys.path
+rss_reader_pkg_dir_path = str(Path(__file__).parent.parent.resolve())
+sys.path.insert(1, rss_reader_pkg_dir_path)
 
 import logging
 
-from MarkKanaplianik.rss_reader.config import Config
-from MarkKanaplianik.rss_reader.reader import NewsNotFoundError, Reader
+from config import Config
+from reader import NewsNotFoundError, Reader
 
-logger = logging.getLogger("rss-reader")
+logger = logging.getLogger("rss-news-reader")
 
 
 def main():
-    """Main function, called when running the exported CLI utility or straightforwardly this module."""
+    """Main function, called when running the application"""
     config = Config()
     config.setup()
 

@@ -1,14 +1,11 @@
 """Module keeps the logic of printing parsed feeds."""
 import json
-import logging
 from typing import List
 
 from colorama import Back, Fore, Style, init
 from pydantic import BaseModel
 
-from MarkKanaplianik.rss_reader.rss_builder import Feed, Item
-
-logger = logging.getLogger("rss-reader")
+from rss_news_reader.rss_builder import Feed, Item
 
 
 class JSONFeeds(BaseModel):

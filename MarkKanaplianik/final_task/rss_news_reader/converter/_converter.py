@@ -15,9 +15,9 @@ from ebooklib import epub
 from jinja2 import Template
 from xhtml2pdf import pisa
 
-from MarkKanaplianik.rss_reader.rss_builder import Feed
+from rss_news_reader.rss_builder import Feed
 
-logger = logging.getLogger("rss-reader")
+logger = logging.getLogger("rss-news-reader")
 
 
 class Converter:

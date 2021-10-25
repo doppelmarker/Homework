@@ -1,5 +1,5 @@
 """Module providing logics on building RSS feeds."""
-from MarkKanaplianik.rss_reader.xml_parser import Element
+from MarkKanaplianik.final_task.rss_news_reader.xml_parser import Element
 
 from ._rss_models import Feed
 from ._url_resolver import URLResolver

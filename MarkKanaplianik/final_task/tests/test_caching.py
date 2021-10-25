@@ -4,8 +4,8 @@ from pathlib import Path
 
 import pytest
 
-from MarkKanaplianik.rss_reader.reader import NewsCache, NewsNotFoundError
-from MarkKanaplianik.rss_reader.rss_builder import Feed, Item
+from MarkKanaplianik.final_task.rss_news_reader.reader import NewsCache, NewsNotFoundError
+from MarkKanaplianik.final_task.rss_news_reader.rss_builder import Feed, Item
 
 EMPTY_FILE_NAME = "empty_tested_cache.json"
 COMPLETE_FILE_NAME = "complete_tested_cache.json"

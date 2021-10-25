@@ -9,7 +9,7 @@ def read(file_name):
 
 
 setup(
-    name="markedrss",
+    name="rss-news-reader",
     version="3.2.2",
     author="doppelmarker",
     author_email="doppelmarker@gmail.com",
@@ -18,21 +18,20 @@ setup(
     long_description=read("README.md"),
     long_description_content_type="text/markdown",
     python_requires=">=3.9",
+    classifiers=[
+        'Programming Language :: Python :: 3.9'
+    ],
     license="MIT",
     packages=find_packages(),
     include_package_data=True,
-    install_requires=[
-        "requests",
-        "pydantic",
-        "Jinja2",
-        "xhtml2pdf",
-        "ebooklib",
-        "colorama",
-    ],
+    install_requires=read("requirements.txt").splitlines(),
     extras_require={
         "aiohttp": ["aiohttp"],
     },
     entry_points={
-        "console_scripts": ["markedrss=rss_reader.__main__:main"],
+        "console_scripts": [
+            "rss-reader=rss_news_reader.rss_news_reader:main",
+            "rss-news-reader=rss_news_reader.rss_news_reader:main"
+        ],
     },
 )

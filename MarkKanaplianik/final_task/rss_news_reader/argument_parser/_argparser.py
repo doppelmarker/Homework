@@ -8,7 +8,7 @@ class ArgParser:
     def __init__(self):
         super(ArgParser, self).__init__()
         self.parser = argparse.ArgumentParser(
-            prog="markedrss",
+            prog="rss-news-reader",
             description="Pure Python command-line RSS reader.",
             formatter_class=lambda prog: argparse.HelpFormatter(
                 prog, max_help_position=30
@@ -78,7 +78,7 @@ class ArgParser:
         self.parser.add_argument(
             "--check-urls",
             help="Ensure URL represents an image (requires installation of additional dependency, use: pip install "
-            "markedrss[aiohttp]).",
+            "aiohttp).",
             action="store_true",
         )
 

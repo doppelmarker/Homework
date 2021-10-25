@@ -9,15 +9,15 @@ from configparser import ConfigParser
 from os import mkdir
 from pathlib import Path
 
-from MarkKanaplianik.rss_reader.argument_parser import ArgParser
+from rss_news_reader.argument_parser import ArgParser
 
 config_logger = logging.getLogger("config")
 # if --verbose not passed, config_logger doesn't print logs to console
 config_logger.setLevel("CRITICAL")
-main_logger = logging.getLogger("rss-reader")
+main_logger = logging.getLogger("rss-news-reader")
 
 # default application directory
-default_reader_dir_path = Path(Path.home(), "rss_reader")
+default_reader_dir_path = Path(Path.home(), "rss_news_reader")
 
 
 class Config(ArgParser, ConfigParser):
@@ -50,9 +50,9 @@ class Config(ArgParser, ConfigParser):
         self.to_epub_action.const = default_reader_dir_path_
 
     def _load_ini(self) -> None:
-        """Loads config from .ini file, which should be located in rss_reader package on the same level with
+        """Loads config from .ini file, which should be located in rss_news_reader package on the same level with
         __main__.py ."""
-        self.read(Path(sys.path[0], "rss_reader.ini"))
+        self.read(Path(sys.path[0], "rss_news_reader.ini"))
         if "rss-reader" not in self.sections() or not self["rss-reader"]:
             config_logger.info(
                 ".ini file is not configured. Running with default settings..."
@@ -127,18 +127,18 @@ class Config(ArgParser, ConfigParser):
 
     def _make_logs(self) -> None:
         """
-        Makes logs directory both with rss_reader.log file. If the specified LOG_DIR_PATH in the .ini file was absent or
+        Makes logs directory both with rss_news_reader.log file. If the specified LOG_DIR_PATH in the .ini file was absent or
         invalid, then logs' directory becomes DEFAULT_DIR_PATH from .ini file. But if then DEFAULT_DIR_PATH is either
         absent or invalid in .ini file, then logs' directory becomes the default application directory.
         """
         try:
-            Config._make_file(self._log_dir_path, "rss_reader.log")
+            Config._make_file(self._log_dir_path, "rss_news_reader.log")
         except OSError:
             config_logger.warning(
                 f"'{self._log_dir_path}' is not a valid dir path for storing log file. Log file will be stored "
                 f"in '{default_reader_dir_path}'. "
             )
-            Config._make_file(default_reader_dir_path, "rss_reader.log")
+            Config._make_file(default_reader_dir_path, "rss_news_reader.log")
 
     def _make_cache(self) -> None:
         """
@@ -247,7 +247,7 @@ class Config(ArgParser, ConfigParser):
             self.parser.error("Neither [source], nor [--date DATE] args were passed!")
 
         f_handler = logging.FileHandler(
-            Path(self._log_dir_path, "rss_reader.log"), mode="a"
+            Path(self._log_dir_path, "rss_news_reader.log"), mode="a"
         )
         f_handler.setFormatter(formatter)
         # main logger's logs higher than 'WARNING' are always printed to .log file

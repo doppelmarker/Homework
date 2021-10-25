@@ -5,7 +5,7 @@ from collections import deque
 from ._parser_models import Element
 from ._tokenizer import Tokenizer, TokenType, XMLError
 
-logger = logging.getLogger("rss-reader")
+logger = logging.getLogger("rss-news-reader")
 
 
 class Parser:

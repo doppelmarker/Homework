@@ -1,6 +1,6 @@
 import pytest
 
-from MarkKanaplianik.rss_reader.xml_parser import Attribute, Element, Parser
+from MarkKanaplianik.final_task.rss_news_reader.xml_parser import Attribute, Element, Parser
 
 
 @pytest.fixture

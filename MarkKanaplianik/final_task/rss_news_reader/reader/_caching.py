@@ -9,9 +9,9 @@ from datetime import datetime
 from pathlib import Path
 from typing import List, Optional
 
-from MarkKanaplianik.rss_reader.rss_builder import Feed, Item
+from rss_news_reader.rss_builder import Feed, Item
 
-logger = logging.getLogger("rss-reader")
+logger = logging.getLogger("rss-news-reader")
 
 
 class NewsNotFoundError(Exception):
