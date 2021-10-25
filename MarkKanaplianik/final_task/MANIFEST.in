@@ -1,1 +1,3 @@
 include *.txt
+include rss_news_reader/converter/*.jinja2
+include rss_news_reader/converter/*.ttf
