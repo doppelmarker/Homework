@@ -41,6 +41,7 @@ class URLResolver:
         """Public method to return a dictionary of resolved items' URLs."""
         resolved_urls = {"image": [], "audio": [], "other": []}
 
+        # perform quick-check by extension
         for i, sources in self.all_urls.items():
             for source in sources:
                 url = source.removesuffix("/")
@@ -52,20 +53,25 @@ class URLResolver:
                     resolved_urls["other"].append(URL(i, url))
 
         if self.check_urls:
-            pattern = re.compile(r"\.[a-z]+$")
-            undefined_urls = list(
-                filter(
-                    lambda undefined_url: not re.search(pattern, undefined_url.source),
-                    resolved_urls["other"],
-                )
-            )
-
-            if platform.system() == "Windows":
-                asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-
+            # try to perform additional slow check by mime type
             try:
                 # extra dependency
                 import aiohttp
+
+                pattern = re.compile(r"\.[a-z]+$")
+                undefined_urls = list(
+                    filter(
+                        lambda undefined_url: not re.search(
+                            pattern, undefined_url.source
+                        ),
+                        resolved_urls["other"],
+                    )
+                )
+
+                if platform.system() == "Windows":
+                    asyncio.set_event_loop_policy(
+                        asyncio.WindowsSelectorEventLoopPolicy()
+                    )
 
                 async def resolve_urls_images_by_mime_type(urls: List[URL]):
                     """Asynchronously runs tasks, each of which determines whether an URL leads to a picture."""

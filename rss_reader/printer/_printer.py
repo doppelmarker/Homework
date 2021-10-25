@@ -6,7 +6,7 @@ from typing import List
 from colorama import Back, Fore, Style, init
 from pydantic import BaseModel
 
-from rss_reader.rss_builder import Feed
+from rss_reader.rss_builder import Feed, Item
 
 logger = logging.getLogger("rss-reader")
 
@@ -34,6 +34,28 @@ class NewsPrinter:
         return model
 
     @staticmethod
+    def _print_item_stuffing(item: Item):
+        """Print the major part of an Item."""
+        if item.title:
+            print(f"Title: {item.title}", end="\n\n   ")
+        if item.description:
+            print(f"{item.description}", end="\n\n   ")
+        if item.link:
+            print(f"Link: {item.link}", end="\n\n   ")
+        if item.author:
+            print(f"Author: {item.author}", end="\n\n   ")
+        if item.pubDate:
+            print(f"Publication date: {item.pubDate}", end="\n\n   ")
+        if any(item.links.values()):
+            print(f"Links:", end="\n")
+            for name, named_links in item.links.items():
+                if named_links:
+                    print(f"      {name}:\n         ", end="")
+                    for i, link in enumerate(named_links, start=1):
+                        print(f"[{i}]: {link}\n         ", end="")
+                    print()
+
+    @staticmethod
     def _print_uncolored(feeds: List[Feed]):
         """Prints news without colorizing."""
         for feed in feeds:
@@ -42,24 +64,7 @@ class NewsPrinter:
                 print(f"Image: {feed.image}\n")
             for item in feed.items:
                 print(f"Item {item.id}:", end="\n\n   ")
-                if item.title:
-                    print(f"Title: {item.title}", end="\n\n   ")
-                if item.description:
-                    print(f"{item.description}", end="\n\n   ")
-                if item.link:
-                    print(f"Link: {item.link}", end="\n\n   ")
-                if item.author:
-                    print(f"Author: {item.author}", end="\n\n   ")
-                if item.pubDate:
-                    print(f"Publication date: {item.pubDate}", end="\n\n   ")
-                if any(item.links.values()):
-                    print(f"Links:", end="\n")
-                    for name, named_links in item.links.items():
-                        if named_links:
-                            print(f"      {name}:\n         ", end="")
-                            for i, link in enumerate(named_links, start=1):
-                                print(f"[{i}]: {link}\n         ", end="")
-                            print()
+                NewsPrinter._print_item_stuffing(item)
                 print()
 
     @staticmethod
@@ -123,24 +128,7 @@ class NewsPrinter:
                         + f"\nItem {item.id}:",
                         end="\n\n   ",
                     )
-                if item.title:
-                    print(f"Title: {item.title}", end="\n\n   ")
-                if item.description:
-                    print(f"{item.description}", end="\n\n   ")
-                if item.link:
-                    print(f"Link: {item.link}", end="\n\n   ")
-                if item.author:
-                    print(f"Author: {item.author}", end="\n\n   ")
-                if item.pubDate:
-                    print(f"Publication date: {item.pubDate}", end="\n\n   ")
-                if item.links:
-                    print(f"Links:", end="\n")
-                    for name, named_links in item.links.items():
-                        if named_links:
-                            print(f"      {name}:\n         ", end="")
-                            for i, link in enumerate(named_links, start=1):
-                                print(f"[{i}]: {link}\n         ", end="")
-                            print()
+                NewsPrinter._print_item_stuffing(item)
             print(Style.RESET_ALL)
 
     def print(self, feeds: List[Feed]):

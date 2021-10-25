@@ -60,19 +60,19 @@ class ArgParser:
         self.to_html_action = self.parser.add_argument(
             "--to-html",
             nargs="?",
-            help="Convert news to .html format and save it by the specified folder path.",
+            help="Convert news to .html format and save it by the specified folder path (FOLDER_PATH can be omitted).",
             metavar="FOLDER_PATH",
         )
         self.to_pdf_action = self.parser.add_argument(
             "--to-pdf",
             nargs="?",
-            help="Convert news to .pdf format and save it by the specified folder path.",
+            help="Convert news to .pdf format and save it by the specified folder path (FOLDER_PATH can be omitted).",
             metavar="FOLDER_PATH",
         )
         self.to_epub_action = self.parser.add_argument(
             "--to-epub",
             nargs="?",
-            help="Convert news to .epub format and save it by the specified folder path.",
+            help="Convert news to .epub format and save it by the specified folder path (FOLDER_PATH can be omitted).",
             metavar="FOLDER_PATH",
         )
         self.parser.add_argument(
