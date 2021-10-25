@@ -225,6 +225,12 @@ Its fragment:
 + https://feeds.simplecast.com/54nAGcIl
 + https://feedforall.com/sample.xml
 + https://rss.dw.com/xml/rss-ru-rus
++ https://people.onliner.by/feed
++ https://brestcity.com/blog/feed
++ https://www.theguardian.com/international/rss - fails saving to .pdf
++ https://rss.dw.com/xml/rss-ru-news
++ https://lenta.ru/rss/top7
++ https://www.liga.net/tech/battles/rss.xml
 
 
 ## Testing
