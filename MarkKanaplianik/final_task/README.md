@@ -64,7 +64,7 @@ To see help message, please, use `-h/--help` argument: `rss-news-reader -h`.
     --to-html [FOLDER_PATH]  Convert news to .html format and save it by the specified folder path (FOLDER_PATH can be omitted).
     --to-pdf [FOLDER_PATH]   Convert news to .pdf format and save it by the specified folder path (FOLDER_PATH can be omitted).
     --to-epub [FOLDER_PATH]  Convert news to .epub format and save it by the specified folder path (FOLDER_PATH can be omitted).
-    --check-urls             Ensure URL represents an image (requires installation of additional dependency, use: pip install markedrss[aiohttp]).
+    --check-urls             Ensure URL represents an image (requires installation of additional dependency, use: pip install aiohttp).
 
 *Some notes*:
 
@@ -240,7 +240,7 @@ implemented without respect to the feeds they belong to, but in this case it wou
 
 ## Parsing XML
 
-XML is parsed by parser implemented from scratch, it exploits the idea of *tokenization* of XML, then dom-tree is
+XML is parsed by parser implemented from scratch, it exploits the idea of XML *tokenization*, dom-tree is
 created from tokens.
 
 *Features*:
@@ -254,7 +254,7 @@ created from tokens.
   \
   Invalid XML example: https://feedforall.com/sample.xml
   \
-  Its fragment:
+  Its fragment (notice tags order):
 
       <i><font color="#0000FF">Homework Assignments <br> School Cancellations <br> Calendar of Events <br> Sports Scores <br> Clubs/Organization Meetings <br> Lunches Menus </i></font>
 
@@ -281,7 +281,7 @@ Modules tested:
 + _builder.py
 + _parser.py
 
-Test coverage is 53%.
+Test coverage is 52%.
 
 In order to run tests, please, install dependencies:
 
