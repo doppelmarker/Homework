@@ -9,7 +9,7 @@ from configparser import ConfigParser
 from os import mkdir
 from pathlib import Path
 
-from rss_reader.argument_parser import ArgParser
+from MarkKanaplianik.rss_reader.argument_parser import ArgParser
 
 config_logger = logging.getLogger("config")
 # if --verbose not passed, config_logger doesn't print logs to console

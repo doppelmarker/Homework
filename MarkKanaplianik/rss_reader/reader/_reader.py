@@ -5,12 +5,12 @@ from typing import List
 
 from requests import Response, exceptions, get
 
-from rss_reader.config import Config
-from rss_reader.converter import Converter
-from rss_reader.printer import NewsPrinter
-from rss_reader.reader import NewsCache
-from rss_reader.rss_builder import Feed, RSSBuilder
-from rss_reader.xml_parser import Parser, XMLError
+from MarkKanaplianik.rss_reader.config import Config
+from MarkKanaplianik.rss_reader.converter import Converter
+from MarkKanaplianik.rss_reader.printer import NewsPrinter
+from MarkKanaplianik.rss_reader.reader import NewsCache
+from MarkKanaplianik.rss_reader.rss_builder import Feed, RSSBuilder
+from MarkKanaplianik.rss_reader.xml_parser import Parser, XMLError
 
 logger = logging.getLogger("rss-reader")
 
