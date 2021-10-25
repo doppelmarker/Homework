@@ -166,26 +166,29 @@ info.
 
 `--json` output example:
 
-    {
+     {
       "feeds": [
           {
-              "title": "Deutsche Welle: DW.COM News Russia",
-              "description": "Deutsche Welle: DW.COM News Russia",
-              "link": "http://www.dw.com/russian/?maca=rus-rss-ru-rus-3233-xml-mrss",
-              "image": "https://rss.dw.com/images/DW-L-RGB_whitebg.png",
-              "language": "ru",
+              "title": "Yahoo News - Latest News & Headlines",
+              "description": "The latest news and headlines from Yahoo! News. Get breaking news stories and in-depth coverage with videos and photos.",
+              "link": "https://www.yahoo.com/news",
+              "image": "http://l.yimg.com/rz/d/yahoo_news_en-US_s_f_p_168x21_news.png",
+              "language": "en-US",
               "items": [
                   {
                       "id": 1,
-                      "title": "В Берлине вынесут приговор по делу \"русского шпиона в бундестаге\"",
-                      "description": "Чем закончится скандал с планами помещений бундестага, отправленными четыре года назад в посольство России? Корреспондент DW побывал на слушании дела Йенса Ф., обвиняемого в шпионаже в пользу РФ.",
-                      "link": "https://www.dw.com/ru/в-берлине-вынесут-приговор-по-делу-русского-шпиона-в-бундестаге/a-59574556?maca=rus-rss-ru-rus-3233-xml-mrss",
+                      "title": "Colombia's most wanted drug lord captured in jungle raid",
+                      "description": "",
+                      "link": "https://news.yahoo.com/colombia-announces-capture-one-most-233233294.html",
                       "author": "",
-                      "pubDate": "Mon, 25 Oct 2021 02:47:00 GMT",
+                      "pubDate": "2021-10-23T23:32:33Z",
                       "links": {
                           "images": [],
                           "audios": [],
-                          "others": []
+                          "others": [
+                              "https://s.yimg.com/uu/api/res/1.2/sbSt9k2i59Ne3T5Dahi7dg--~B/aD0xNTAwO3c9MjAwMDthcHBpZD15dGFjaHlvbg--/https://media.zenfs.com/en/ap.org/1fc569ce977352662b4cf3039acae975",
+                              "http://www.ap.org"
+                          ]
                       }
                   },
                   ...
