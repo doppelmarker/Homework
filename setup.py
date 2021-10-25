@@ -16,6 +16,7 @@ setup(
     url="https://github.com/doppelmarker/Homework",
     description="Pure Python command-line RSS reader",
     long_description=read("README.md"),
+    long_description_content_type="text/markdown",
     python_requires=">=3.9",
     license="MIT",
     packages=find_packages(),

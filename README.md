@@ -240,7 +240,7 @@ In order to run tests, please, install dependencies:
 
 And use the following command:
 
-    pytest —cov=rss_reader tests/
+    pytest --cov=rss_reader tests/
 
 
 ## Known problems:
