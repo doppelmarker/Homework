@@ -269,6 +269,8 @@ tokens.
 
 ## Tested RSS links
 
++ http://rss.cnn.com/rss/edition.rss
++ https://worldoftanks.ru/ru/rss/news/
 + https://feeds.megaphone.fm/WWO3519750118
 + https://news.yahoo.com/rss/
 + https://rss.art19.com/apology-line

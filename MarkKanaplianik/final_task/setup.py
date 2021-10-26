@@ -10,7 +10,7 @@ def read(file_name):
 
 setup(
     name="rss-news-reader",
-    version="3.2.2",
+    version="3.2.3",
     author="doppelmarker",
     author_email="doppelmarker@gmail.com",
     url="https://github.com/doppelmarker/Homework",

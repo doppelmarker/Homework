@@ -28,7 +28,7 @@ class ArgParser:
             "--version",
             help="Print version info.",
             action="version",
-            version="3.2.2",
+            version="3.2.3",
         )
         self.parser.add_argument(
             "--verbose", help="Output verbose status messages.", action="store_true"
@@ -78,7 +78,7 @@ class ArgParser:
         self.parser.add_argument(
             "--check-urls",
             help="Ensure URL represents an image (requires installation of additional dependency, use: pip install "
-            "aiohttp).",
+                 "aiohttp).",
             action="store_true",
         )
 

@@ -52,7 +52,7 @@ class Reader:
             if not self._is_rss(grabbed):
                 raise NotRSSError(f"{self.config.source} is not RSS!")
 
-            parser = Parser(unescape(grabbed.text))
+            parser = Parser(unescape(grabbed.content.decode(encoding="utf-8")))
 
             dom = parser.parse()
 

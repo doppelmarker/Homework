@@ -71,13 +71,17 @@ class Tokenizer:
         self.tag_name: str
 
     def _skip_head(self):
-        """Skips the leading tag <?xml version="1.0" encoding="UTF-8"?>."""
-        suspect = self.xml_io.read(2)[-1]
-        if suspect == "?":
-            while _ := self._read_char() != ">":
-                pass
-        else:
-            self.xml_io.seek(0)
+        """Skips the leading tags like <?xml version="1.0" encoding="UTF-8"?>."""
+        while True:
+            current = self.xml_io.tell()
+            self._read_char(True)
+            suspect = self.xml_io.read(1)
+            if suspect == "?":
+                while self._read_char() != ">":
+                    pass
+            else:
+                self.xml_io.seek(current)
+                return
 
     def __iter__(self):
         """Tokenizer supports iterator protocol."""
@@ -106,8 +110,8 @@ class Tokenizer:
             self._parse_text()
 
         if (
-            self.token_type == TokenType.START_TAG
-            or self.token_type == TokenType.END_TAG
+                self.token_type == TokenType.START_TAG
+                or self.token_type == TokenType.END_TAG
         ):
             # if symbol '/' is present in tag
             if self.has_end_tag:
@@ -171,8 +175,9 @@ class Tokenizer:
                 counter_right_bracket += 1
 
         cdata_html = cdata.removeprefix("<![CDATA[").removesuffix("]]>").strip()
-        # if cdata was empty, put a whitespace in order to avoid EmptyXMLError
-        self.cdata_tokenizer = Tokenizer(cdata_html if cdata_html else " ")
+        # sometimes cdata is represented as a pure text, wrap it into <p></p> tag to be sure it is html
+        cdata_html = f"<p>{cdata_html}</p>"
+        self.cdata_tokenizer = Tokenizer(cdata_html)
         self.token_type = TokenType.CDATA
 
     def _parse_text(self):
