@@ -36,6 +36,7 @@ class Reader:
     def _is_rss(grabbed: Response):
         """Method defining whether grabbed content represents RSS channel."""
         for rss_mime_type in Reader.rss_mime_types:
+            ct = grabbed.headers["content-type"]
             if rss_mime_type in grabbed.headers["content-type"]:
                 return True
         return False
@@ -47,7 +48,7 @@ class Reader:
     def _get_parsed(self, cache: NewsCache) -> Feed:
         """Private method to obtain a parsed feed."""
         try:
-            grabbed = get(self.config.source, timeout=5)
+            grabbed = get(self.config.source, timeout=5, headers={"User-Agent": "curl/7.72.0"})
 
             if not self._is_rss(grabbed):
                 raise NotRSSError(f"{self.config.source} is not RSS!")
