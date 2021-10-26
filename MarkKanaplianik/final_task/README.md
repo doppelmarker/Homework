@@ -8,6 +8,8 @@ Final task for EPAM Python Training 2021.09
 
 ***Python 3.9 required***
 
+***Tested on Windows and MacOS***
+
 ## Installation and usage
 
 You can install it by running the following command:
@@ -111,12 +113,17 @@ Application creates several files:
 + `rss_news_reader.log`;
 + converted to supported formats files: `news.html`/`pdf`/`epub`
 
-By default, the application files are stored in the home directory:
+By default, the application files are stored inside home directory in a freshly created `rss_news_reader` folder:
 
     - Windows: C:\Users\User\rss_news_reader
-    - Linux: /home/username/rss_news_reader
+        or C:\Users\rss_news_reader
+    - Linux and MacOS: /home/rss_news_reader
 
-You can change this by adding `rss_news_reader.ini` file inside `rss_news_reader` package.
+You can change this by adding `rss_news_reader.ini` file either inside `rss_news_reader` **package** locally, or inside
+home directory.
+
+If `rss_news_reader.ini` files are present both inside **package** and home directory, then one inside **package**
+overrides one from home directory.
 
 The structure of `rss_news_reader.ini` file is the following:
 
@@ -242,8 +249,8 @@ implemented without respect to the feeds they belong to, but in this case it wou
 
 ## Parsing XML
 
-XML is parsed by parser implemented from scratch, it exploits the idea of XML *tokenization*, dom-tree is
-created from tokens.
+XML is parsed by parser implemented from scratch, it exploits the idea of XML *tokenization*, dom-tree is created from
+tokens.
 
 *Features*:
 
