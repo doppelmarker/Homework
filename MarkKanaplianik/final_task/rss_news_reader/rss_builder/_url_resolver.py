@@ -95,19 +95,19 @@ class URLResolver:
                         resolved_urls["image"].append(url)
 
                 logger.info(
-                    f"There are {len(undefined_urls)} urls to resolve. Please, wait..."
+                    f"There are {len(undefined_urls)} URLs to resolve. Please, wait..."
                 )
 
                 asyncio.run(resolve_urls_images_by_mime_type(undefined_urls))
 
             except ModuleNotFoundError:
                 logger.warning(
-                    f"Consider installing extra dependency aiohttp to perform advanced url type resolving. "
-                    f"Use: pip install markedrss[aiohttp]"
+                    f"Consider installing extra dependency aiohttp to perform advanced URL type resolving. "
+                    f"Use: pip install aiohttp"
                 )
             except aiohttp.ClientError:
                 logger.warning(
-                    f"Connection problems. Url type resolving is performed only by its extension."
+                    f"Connection problems. URL type resolving is performed only by extension."
                 )
 
         return resolved_urls

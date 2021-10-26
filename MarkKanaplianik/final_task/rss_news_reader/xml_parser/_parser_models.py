@@ -26,7 +26,7 @@ class Element(BaseModel):
         Generator method yielding all elements having a given tag_name in the subtree of the current element.\n
         By default, nested parameter is equal to True, this means that find_all will traverse the whole subtree of the
         given element.\n
-        If nested is set to False, than it is implied that elements to be searched for don't contain
+        If nested is set to False, then it is implied that elements to be searched don't contain
         other elements with the same tag_name.\n
         Summing up, if XML structure is rather complicated, and we are acknowledged that searched elements don't
         contain elements with the same tag_name, then providing this option may drastically speed up elements searching.
