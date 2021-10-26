@@ -283,6 +283,7 @@ tokens.
 + https://rss.dw.com/xml/rss-ru-news
 + https://lenta.ru/rss/top7
 + https://www.liga.net/tech/battles/rss.xml
++ https://vse.sale/news/rss
 
 ## Testing
 
