@@ -4,6 +4,7 @@ Provides Config class, its instance possesses fields representing passed console
 These fields are subsequently used to adjust the workflow of the application.
 """
 import logging
+import os
 import sys
 from configparser import ConfigParser
 from os import mkdir
@@ -49,27 +50,33 @@ class Config(ArgParser, ConfigParser):
         self.to_pdf_action.const = default_reader_dir_path_
         self.to_epub_action.const = default_reader_dir_path_
 
-    def _load_ini(self) -> None:
-        """Loads config from .ini file, which should be located in rss_news_reader package on the same level with
-        __main__.py ."""
-        self.read(Path(sys.path[0], "rss_news_reader.ini"))
-        if "rss-reader" not in self.sections() or not self["rss-reader"]:
-            config_logger.info(
-                ".ini file is not configured. Running with default settings..."
-            )
-            return
+    def _load_ini(self, ini_paths: tuple[Path, Path]) -> None:
+        """Loads configs from .ini files, which can be located either inside rss_news_reader package or inside home
+        directory."""
+        i = 0
+        while i < len(ini_paths):
+            self.read(ini_paths[i])
+            if "rss-reader" not in self.sections() or not self["rss-reader"]:
+                if i < len(ini_paths) - 1:
+                    i += 1
+                    continue
+                config_logger.info(
+                    ".ini file is not configured. Running with default settings..."
+                )
+                return
 
-        if default_dir_path := self["rss-reader"].get("DEFAULT_DIR_PATH", None):
-            if Config._is_ini_default_dir_path_valid(Path(default_dir_path)):
-                self._set_defaults(Path(default_dir_path))
-        if cache_dir_path := self["rss-reader"].get("CACHE_DIR_PATH", None):
-            self._cache_dir_path = Path(cache_dir_path)
-        if log_dir_path := self["rss-reader"].get("LOG_DIR_PATH", None):
-            self._log_dir_path = Path(log_dir_path)
-        if convert_dir_path := self["rss-reader"].get("CONVERT_DIR_PATH", None):
-            self.to_html_action.const = Path(convert_dir_path)
-            self.to_pdf_action.const = Path(convert_dir_path)
-            self.to_epub_action.const = Path(convert_dir_path)
+            if default_dir_path := self["rss-reader"].get("DEFAULT_DIR_PATH", None):
+                if Config._is_ini_default_dir_path_valid(Path(default_dir_path)):
+                    self._set_defaults(Path(default_dir_path))
+            if cache_dir_path := self["rss-reader"].get("CACHE_DIR_PATH", None):
+                self._cache_dir_path = Path(cache_dir_path)
+            if log_dir_path := self["rss-reader"].get("LOG_DIR_PATH", None):
+                self._log_dir_path = Path(log_dir_path)
+            if convert_dir_path := self["rss-reader"].get("CONVERT_DIR_PATH", None):
+                self.to_html_action.const = Path(convert_dir_path)
+                self.to_pdf_action.const = Path(convert_dir_path)
+                self.to_epub_action.const = Path(convert_dir_path)
+            i += 1
 
     def _set_verbose(self) -> None:
         """Sets verbose mode if --verbose argument was passed."""
@@ -98,6 +105,7 @@ class Config(ArgParser, ConfigParser):
         try:
             if not Path(dir_path).is_dir():
                 mkdir(dir_path)
+                os.rmdir(dir_path)
             return True
         except OSError:
             config_logger.warning(
@@ -195,7 +203,7 @@ class Config(ArgParser, ConfigParser):
         """
         Public method of Config class, which does the whole configuration job:
 
-        - sets up the 'config' logger and the application 'rss-reader' logger;
+        - sets up the 'config' logger and the application 'rss-news-reader' logger;
 
         - loads .ini file config;
 
@@ -224,8 +232,14 @@ class Config(ArgParser, ConfigParser):
 
         # setting default paths
         self._set_defaults(default_reader_dir_path)
-        # loading .ini file
-        self._load_ini()
+        ini_paths = (
+            # global .ini file
+            Path(Path.home(), "rss_news_reader.ini"),
+            # local .ini file overrides global
+            Path(sys.path[0], "rss_news_reader.ini")
+        )
+        # loading .ini files
+        self._load_ini(ini_paths)
         # loading cli arguments after setting default values for --to-html, --to-pdf, --to-epub when
         # they are not given paths in console
         self._load_cli()
