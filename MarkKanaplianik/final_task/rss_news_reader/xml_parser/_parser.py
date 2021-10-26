@@ -30,7 +30,7 @@ class Parser:
                                 pass
                         except IndexError:
                             # issue with https://feedforall.com/sample.xml
-                            raise XMLError("Invalid XML!")
+                            raise XMLError(f"Tag {token} violates nesting rules!")
                 elif tokenizer.token_type == TokenType.TEXT:
                     if not tokenizer.text.isspace():
                         stack[-1].children.append(token)
