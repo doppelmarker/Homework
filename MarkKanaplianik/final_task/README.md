@@ -335,7 +335,7 @@ tokens.
   https://www.liquiddota.com/rss/news.xml
 
 
-+ Please, see `Know problems` section below:
++ Please, see `Known problems` section below:
 
   https://www.theguardian.com/international/rss
 
@@ -371,7 +371,7 @@ Then, provided, `/Homework/MarkKanaplianik/final_task` is your current directory
       raised
       (No such file or directory), but both of them exist).
 
-+ big feeds like this one https://feeds.megaphone.fm/WWO3519750118 may get truncated when printing to console because of
++ Big feeds like this one https://feeds.megaphone.fm/WWO3519750118 may get truncated when printing to console because of
   console's char amount native limitations;
 
 + `--colorize` works console-specifically, which implies that in different terminals colorized text may look
