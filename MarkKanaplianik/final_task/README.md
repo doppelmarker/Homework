@@ -335,21 +335,11 @@ tokens.
   https://www.liquiddota.com/rss/news.xml
 
 
-+ See `Known problematic feeds` section below:
++ Please, see `Know problems` section below:
 
   https://www.theguardian.com/international/rss
 
   https://www.hyprgame.com/blog/category/dota2/feed/
-
-## Known problematic feeds:
-
-Some problems with PDF conversion exist:
-
-+ https://www.theguardian.com/international/rss error saving to .pdf; this error happens because
-  feature `-pdf-word-wrap: CJK;` is being used inside `.jinja2` template; without using this feature long strings are
-  not wrapped on the next line;
-+ https://www.hyprgame.com/blog/category/dota2/feed/ error saving to .pdf (for some reason FileNotFoundError is raised
-  (No such file or directory), but both of them exist).
 
 ## Testing
 
@@ -371,7 +361,18 @@ Then, provided, `/Homework/MarkKanaplianik/final_task` is your current directory
 
 ## Known problems:
 
++ Some problems with PDF conversion exist:
+
+    + https://www.theguardian.com/international/rss error saving to .pdf; this error happens because
+      feature `-pdf-word-wrap: CJK;` is being used inside `.jinja2` template; without using this feature long strings
+      are not wrapped on the next line;
+
+    + https://www.hyprgame.com/blog/category/dota2/feed/ error saving to .pdf (for some reason FileNotFoundError is
+      raised
+      (No such file or directory), but both of them exist).
+
 + big feeds like this one https://feeds.megaphone.fm/WWO3519750118 may get truncated when printing to console because of
-  its native limitations;
+  console's char amount native limitations;
+
 + `--colorize` works console-specifically, which implies that in different terminals colorized text may look
   differently.
