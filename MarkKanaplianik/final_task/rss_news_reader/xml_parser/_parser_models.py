@@ -1,6 +1,7 @@
 """Module contains models for representing parsed XML data structures."""
 import re
 from typing import Optional
+from urllib.parse import urlparse
 
 from pydantic import BaseModel
 
@@ -55,16 +56,28 @@ class Element(BaseModel):
                 pass
         return Element()
 
-    def find_urls(self):
-        """Generator method yielding all URLs in the subtree of the given element. Element's text for URL presence is
-        explored as well as its attributes."""
+    def _find_all_urls(self):
+        """Generator private method yielding all URLs in the subtree of the given element. Element's text for URL
+        presence is explored as well as its attributes."""
         for child in self.children:
             if re.match("http", child.text):
                 yield child.text
             for attr in child.attributes:
                 if attr.value and re.match("http", attr.value):
                     yield attr.value
-            yield from child.find_urls()
+            yield from child._find_all_urls()
+
+    def find_urls(self):
+        """Public method returning a set of URLs in the subtree of the given element. Whenever several URLs having
+        different parameters and pointing to the same image encountered, image with higher resolution is chosen."""
+        urls_dict = {}
+        # splitting URLs by the groups
+        for url in self._find_all_urls():
+            url_no_params = urlparse(url).path
+            if url_no_params not in urls_dict:
+                urls_dict[url_no_params] = []
+            urls_dict[url_no_params].append(url)
+        return {max(similar_urls_group) for similar_urls_group in urls_dict.values()}
 
     def _find_text(self):
         """Generator method yielding all stripped text occurrences in the subtree of the current element."""
@@ -89,9 +102,9 @@ class Element(BaseModel):
 
     def __eq__(self, other: "Element"):
         if (
-                self.tag_name == other.tag_name
-                and self.attributes == other.attributes
-                and self.text == other.text
+            self.tag_name == other.tag_name
+            and self.attributes == other.attributes
+            and self.text == other.text
         ):
             for self_child, other_child in zip(self.children, other.children):
                 if self_child != other_child:

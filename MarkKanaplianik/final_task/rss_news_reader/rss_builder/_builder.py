@@ -25,7 +25,7 @@ class RSSBuilder:
                 i += 1
 
         all_urls = {
-            i: set(item.find_urls())
+            i: item.find_urls()
             for i, item in zip(
                 limitation_gen(self.limit), self.dom.find_all("item", nested=False)
             )
