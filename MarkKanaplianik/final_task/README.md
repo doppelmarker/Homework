@@ -372,7 +372,7 @@ Then, provided, `/Homework/MarkKanaplianik/final_task` is your current directory
       (No such file or directory), but both of them exist).
 
 + Big feeds like this one https://feeds.megaphone.fm/WWO3519750118 may get truncated when printing to console because of
-  console's char amount native limitations;
+  console's chars amount native limitations;
 
 + `--colorize` works console-specifically, which implies that in different terminals colorized text may look
   differently.
