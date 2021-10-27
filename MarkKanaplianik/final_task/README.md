@@ -375,4 +375,7 @@ Then, provided, `/Homework/MarkKanaplianik/final_task` is your current directory
   console's chars amount native limitations;
 
 + `--colorize` works console-specifically, which implies that in different terminals colorized text may look
-  differently.
+  differently;
+
++ resulting converted files may have several images, which are the same, but with different parameters (width, height,
+  etc.).
