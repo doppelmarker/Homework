@@ -46,29 +46,38 @@ module:
 
     python rss_reader.py
 
+### Additional dependencies
+
+In order to install additional dependency to make `--check-urls` work, please, use the following command:
+
+    pip install aiohttp
+
+## Functionality
+
 To see help message, please, use `-h/--help` argument: `rss-news-reader -h`.
 
-    usage: rss-news-reader [-h] [-v] [--verbose] [-c] [--clear-cache] [-l LIMIT] [--json] [-d DATE] [--to-html [FOLDER_PATH]] [--to-pdf [FOLDER_PATH]] [--to-epub [FOLDER_PATH]] [--check-urls]
-                 [source]
+    usage: rss-news-reader [-h] [-v] [--verbose] [-c] [--json] [-l LIMIT] [-d DATE] [--to-html [FOLDER_PATH]] [--to-pdf [FOLDER_PATH]] [--to-epub [FOLDER_PATH]] [--check-urls]
+                       [--clear-cache]
+                       [source]
 
     Pure Python command-line RSS reader.
-
+    
     positional arguments:
-    source                   RSS URL
-
+      source                   RSS URL
+    
     optional arguments:
-    -h, --help               Show this help message and exit.
-    -v, --version            Print version info.
-    --verbose                Output verbose status messages.
-    -c, --colorize           Print news in colorized mode.
-    --clear-cache            Clear cache file on startup.
-    -l LIMIT, --limit LIMIT  Limit news topics if this parameter provided.
-    --json                   Print result as JSON.
-    -d DATE, --date DATE     Print cached news published on a specific date.
-    --to-html [FOLDER_PATH]  Convert news to .html format and save it by the specified folder path (FOLDER_PATH can be omitted).
-    --to-pdf [FOLDER_PATH]   Convert news to .pdf format and save it by the specified folder path (FOLDER_PATH can be omitted).
-    --to-epub [FOLDER_PATH]  Convert news to .epub format and save it by the specified folder path (FOLDER_PATH can be omitted).
-    --check-urls             Ensure URL represents an image (requires installation of additional dependency, use: pip install aiohttp).
+      -h, --help               Show this help message and exit.
+      -v, --version            Print version info.
+      --verbose                Output verbose status messages.
+      -c, --colorize           Print news in colorized mode.
+      --json                   Print news as JSON.
+      -l LIMIT, --limit LIMIT  Limit news amount to be processed.
+      -d DATE, --date DATE     Get news published on a specific date from cache for further processing.
+      --to-html [FOLDER_PATH]  Convert news to .html format and save it by the specified folder path (FOLDER_PATH can be omitted).
+      --to-pdf [FOLDER_PATH]   Convert news to .pdf format and save it by the specified folder path (FOLDER_PATH can be omitted).
+      --to-epub [FOLDER_PATH]  Convert news to .epub format and save it by the specified folder path (FOLDER_PATH can be omitted).
+      --check-urls             Ensure URL represents an image (requires installation of additional dependency, use: pip install aiohttp).
+      --clear-cache            Clear cache file on startup.
 
 *Some notes*:
 
@@ -78,20 +87,22 @@ To see help message, please, use `-h/--help` argument: `rss-news-reader -h`.
       rss-reader {YOUR ARGUMENTS}    
 
 + when `--clear-cache` is passed individually, cache gets cleared and application terminates;
-+ `--check-urls` requires internet connection; without passing this argument some URLs representing images may be
-  ascribed to `others` category of resulting converted files.
-
-### Additional dependencies
-
-In order to install additional dependency to make `--check-urls` work, please, use the following command:
-
-    pip install aiohttp
++ `--check-urls` requires internet connection; when passed, it produces async HTTP HEAD requests in order to define
+  whether such URLs
+  as `https://s.yimg.com/uu/api/res/1.2/LDLfXhKlx.t2_f.QDSUtqw--~B/aD0yODEyO3c9NDIxODthcHBpZD15dGFjaHlvbg--/https://media.zenfs.com/en/ap.org/4c9d417a53588f0217535af5f47a2ab4`
+  are images; without passing this argument some URLs representing images may be ascribed to `others` category of
+  resulting parsed feed; this might bring some inconvenience to the user if he was unable to naturally see the image
+  rather than its link in `others` category;
++ whenever several URLs with different parameters (?width=...&height=...) but leading to the exact one image are
+  encountered, then image with the best resolution is chosen in order to avoid data redundancy; it has vital importance
+  especially for file conversion, when the user doesn't want to see the same images, ones with better quality and others
+  less attractive.
 
 ## Logging
 
 There are 2 loggers:
 
-+ general `rss-news-reader` application logger;
++ general-purpose `rss-news-reader` application logger;
 + `config` logger.
 
 Messages with either `WARNING` or `ERROR` severities are ***always*** printed to `rss_news_reader.log` file.
@@ -143,7 +154,7 @@ For `cache.json` file:
 
     home directory -> DEFAULT_DIR_PATH -> CACHE_DIR_PATH 
 
-For converted to supported formats files like news.`html`/`pdf`/`epub`:
+For converted to supported formats files like `news.html`/`pdf`/`epub`:
 
     home directory -> DEFAULT_DIR_PATH -> CONVERT_DIR_PATH -> command line arguments 
 
@@ -167,34 +178,32 @@ info.
                 "language": "en-US"
             },
             {
-                "id": 1,
-                "title": "Colombia's most wanted drug lord captured in jungle raid",
+                "title": "California county closes In-N-Out over vaccine verification",
                 "description": "",
-                "link": "https://news.yahoo.com/colombia-announces-capture-one-most-233233294.html",
+                "link": "https://news.yahoo.com/california-county-closes-n-over-014048650.html",
                 "author": "",
-                "pubDate": "2021-10-23T23:32:33Z",
+                "pubDate": "2021-10-27T01:40:48Z",
                 "links": {
                     "images": [],
                     "audios": [],
                     "others": [
-                        "https://s.yimg.com/uu/api/res/1.2/sbSt9k2i59Ne3T5Dahi7dg--~B/aD0xNTAwO3c9MjAwMDthcHBpZD15dGFjaHlvbg--/https://media.zenfs.com/en/ap.org/1fc569ce977352662b4cf3039acae975",
-                        "http://www.ap.org"
+                        "http://www.ap.org",
+                        "https://s.yimg.com/uu/api/res/1.2/LDLfXhKlx.t2_f.QDSUtqw--~B/aD0yODEyO3c9NDIxODthcHBpZD15dGFjaHlvbg--/https://media.zenfs.com/en/ap.org/4c9d417a53588f0217535af5f47a2ab4"
                     ]
                 }
             },
             {
-                "id": 2,
-                "title": "I took a 30-hour train from New York to Miami, and the motion sickness and terrible sleep were too much for me",
+                "title": "Lap dances at Hazard homecoming: Don’t schools already have enough problems these days?",
                 "description": "",
-                "link": "https://news.yahoo.com/took-30-hour-train-york-102700276.html",
+                "link": "https://news.yahoo.com/lap-dances-hazard-homecoming-don-170226073.html",
                 "author": "",
-                "pubDate": "2021-10-24T10:27:00Z",
+                "pubDate": "2021-10-27T17:02:26Z",
                 "links": {
                     "images": [],
                     "audios": [],
                     "others": [
-                        "https://s.yimg.com/uu/api/res/1.2/OEoRF0WWW8IeP0etSC7D2w--~B/aD0yMjQ5O3c9MzAwMDthcHBpZD15dGFjaHlvbg--/https://media.zenfs.com/en/insider_articles_922/86c1372fd1bf9d0690cac85bdcdecf5f",
-                        "https://www.insider.com"
+                        "https://www.kentucky.com",
+                        "https://s.yimg.com/uu/api/res/1.2/ad5IuEyvQKF5s5.nr9jNdg--~B/aD0yMDI4O3c9MTE0MDthcHBpZD15dGFjaHlvbg--/https://media.zenfs.com/en/lexington_herald_leader_mcclatchy_articles_314/b7fb5b959d75cd96f58b434428d59ef1"
                     ]
                 }
             },
@@ -208,38 +217,51 @@ info.
 + `--json`-printed results are different from ones, stored in cache; user is usually not encouraged to explore and
   modify cache file (though, he is not forbidden to do so), because it's not a part of the public interface, that's why
   developers have a right to implement it in a handy manner for them, but not in a user-friendly manner,
-  whereas `--json`
-  argument is a part of the user interface, that's why its output is user-friendly.
+  whereas `--json` argument is a part of the user interface, that's why its output is user-friendly.
 
 `--json` output example:
 
-     {
-      "feeds": [
-          {
-              "title": "Yahoo News - Latest News & Headlines",
-              "description": "The latest news and headlines from Yahoo! News. Get breaking news stories and in-depth coverage with videos and photos.",
-              "link": "https://www.yahoo.com/news",
-              "image": "http://l.yimg.com/rz/d/yahoo_news_en-US_s_f_p_168x21_news.png",
-              "language": "en-US",
-              "items": [
-                  {
-                      "id": 1,
-                      "title": "Colombia's most wanted drug lord captured in jungle raid",
-                      "description": "",
-                      "link": "https://news.yahoo.com/colombia-announces-capture-one-most-233233294.html",
-                      "author": "",
-                      "pubDate": "2021-10-23T23:32:33Z",
-                      "links": {
-                          "images": [],
-                          "audios": [],
-                          "others": [
-                              "https://s.yimg.com/uu/api/res/1.2/sbSt9k2i59Ne3T5Dahi7dg--~B/aD0xNTAwO3c9MjAwMDthcHBpZD15dGFjaHlvbg--/https://media.zenfs.com/en/ap.org/1fc569ce977352662b4cf3039acae975",
-                              "http://www.ap.org"
-                          ]
-                      }
-                  },
-                  ...
-          ...
+    {
+        "feeds": [
+            {
+                "title": "Yahoo News - Latest News & Headlines",
+                "description": "The latest news and headlines from Yahoo! News. Get breaking news stories and in-depth coverage with videos and photos.",
+                "link": "https://www.yahoo.com/news",
+                "image": "http://l.yimg.com/rz/d/yahoo_news_en-US_s_f_p_168x21_news.png",
+                "language": "en-US",
+                "items": [
+                    {
+                        "title": "California county closes In-N-Out over vaccine verification",
+                        "description": "",
+                        "link": "https://news.yahoo.com/california-county-closes-n-over-014048650.html",
+                        "author": "",
+                        "pubDate": "2021-10-27T01:40:48Z",
+                        "links": {
+                            "images": [],
+                            "audios": [],
+                            "others": [
+                                "https://s.yimg.com/uu/api/res/1.2/LDLfXhKlx.t2_f.QDSUtqw--~B/aD0yODEyO3c9NDIxODthcHBpZD15dGFjaHlvbg--/https://media.zenfs.com/en/ap.org/4c9d417a53588f0217535af5f47a2ab4",
+                                "http://www.ap.org"
+                            ]
+                        }
+                    },
+                    {
+                        "title": "Lap dances at Hazard homecoming: Don’t schools already have enough problems these days?",
+                        "description": "",
+                        "link": "https://news.yahoo.com/lap-dances-hazard-homecoming-don-170226073.html",
+                        "author": "",
+                        "pubDate": "2021-10-27T17:02:26Z",
+                        "links": {
+                            "images": [],
+                            "audios": [],
+                            "others": [
+                                "https://www.kentucky.com",
+                                "https://s.yimg.com/uu/api/res/1.2/ad5IuEyvQKF5s5.nr9jNdg--~B/aD0yMDI4O3c9MTE0MDthcHBpZD15dGFjaHlvbg--/https://media.zenfs.com/en/lexington_herald_leader_mcclatchy_articles_314/b7fb5b959d75cd96f58b434428d59ef1"
+                            ]
+                        }
+                    },
+                    ...
+            ...
 
 Why is there a list of feeds inside `--json` structure, not just a single feed? Inside cache file there may be items
 with the same `pubDate`, but they may belong to different feeds. So, when there are such items and a user
@@ -349,7 +371,7 @@ Modules tested:
 + _builder.py
 + _parser.py
 
-Test coverage is 51%.
+***Test coverage is 51%.***
 
 In order to run tests, please, install dependencies:
 
@@ -365,7 +387,7 @@ Then, provided, `/Homework/MarkKanaplianik/final_task` is your current directory
 
     + https://www.theguardian.com/international/rss error saving to .pdf; this error happens because
       feature `-pdf-word-wrap: CJK;` is being used inside `.jinja2` template; without using this feature long strings
-      are not wrapped on the next line;
+      wouldn't be wrapped on the next line and pdf would look clumsy;
 
     + https://www.hyprgame.com/blog/category/dota2/feed/ error saving to .pdf (for some reason FileNotFoundError is
       raised
@@ -375,7 +397,4 @@ Then, provided, `/Homework/MarkKanaplianik/final_task` is your current directory
   console's chars amount native limitations;
 
 + `--colorize` works console-specifically, which implies that in different terminals colorized text may look
-  differently;
-
-+ resulting converted files may have several images, which are the same, but with different parameters (width, height,
-  etc.).
+  differently.

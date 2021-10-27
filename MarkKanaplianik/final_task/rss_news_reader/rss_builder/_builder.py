@@ -65,7 +65,6 @@ class RSSBuilder:
             )
 
             feed_item = {
-                "id": i,
                 "title": item.get_element_text("title"),
                 "description": item.get_element_text("description"),
                 "link": item_link,

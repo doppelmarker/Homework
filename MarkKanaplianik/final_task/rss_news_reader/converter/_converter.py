@@ -121,7 +121,9 @@ class Converter:
         book.add_item(epub.EpubNcx())
         book.add_item(epub.EpubNav())
 
-        epub.write_epub(file_path, book)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            epub.write_epub(file_path, book)
 
         logger.info(f"Saved epub in {file_path}.")
 

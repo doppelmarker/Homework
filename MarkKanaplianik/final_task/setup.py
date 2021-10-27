@@ -10,7 +10,7 @@ def read(file_name):
 
 setup(
     name="rss-news-reader",
-    version="3.2.4",
+    version="3.2.5",
     author="doppelmarker",
     author_email="doppelmarker@gmail.com",
     url="https://github.com/doppelmarker/Homework",
@@ -18,9 +18,7 @@ setup(
     long_description=read("README.md"),
     long_description_content_type="text/markdown",
     python_requires=">=3.9",
-    classifiers=[
-        'Programming Language :: Python :: 3.9'
-    ],
+    classifiers=["Programming Language :: Python :: 3.9"],
     license="MIT",
     packages=find_packages(),
     include_package_data=True,
@@ -31,7 +29,7 @@ setup(
     entry_points={
         "console_scripts": [
             "rss-reader=rss_news_reader.rss_reader:main",
-            "rss-news-reader=rss_news_reader.rss_reader:main"
+            "rss-news-reader=rss_news_reader.rss_reader:main",
         ],
     },
 )

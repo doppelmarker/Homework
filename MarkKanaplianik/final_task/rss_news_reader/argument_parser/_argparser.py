@@ -28,7 +28,7 @@ class ArgParser:
             "--version",
             help="Print version info.",
             action="version",
-            version="3.2.4",
+            version="3.2.5",
         )
         self.parser.add_argument(
             "--verbose", help="Output verbose status messages.", action="store_true"
@@ -40,22 +40,19 @@ class ArgParser:
             action="store_true",
         )
         self.parser.add_argument(
-            "--clear-cache",
-            help="Clear cache file on startup.",
-            action="store_true",
+            "--json", help="Print news as JSON.", action="store_true"
         )
         self.parser.add_argument(
             "-l",
             "--limit",
-            help="Limit news topics if this parameter provided.",
+            help="Limit news amount to be processed.",
             type=int,
             default=-2,
         )
         self.parser.add_argument(
-            "--json", help="Print result as JSON.", action="store_true"
-        )
-        self.parser.add_argument(
-            "-d", "--date", help="Print cached news published on a specific date."
+            "-d",
+            "--date",
+            help="Get news published on a specific date from cache for further processing.",
         )
         self.to_html_action = self.parser.add_argument(
             "--to-html",
@@ -78,7 +75,12 @@ class ArgParser:
         self.parser.add_argument(
             "--check-urls",
             help="Ensure URL represents an image (requires installation of additional dependency, use: pip install "
-                 "aiohttp).",
+            "aiohttp).",
+            action="store_true",
+        )
+        self.parser.add_argument(
+            "--clear-cache",
+            help="Clear cache file on startup.",
             action="store_true",
         )
 

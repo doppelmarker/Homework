@@ -9,6 +9,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import List, Optional
 
+import pydantic
+
 from rss_news_reader.rss_builder import Feed, Item
 
 logger = logging.getLogger("rss-news-reader")
@@ -70,9 +72,28 @@ class NewsCache:
                     cache_file.truncate(0)
                     json_dict = dict()
 
+                # feed_head encompasses feed info without items attribute
                 feed_head = feed.dict(exclude={"items"})
+                # if cache is not empty and source is present in it
                 if json_dict and self.source in json_dict:
-                    if feed_head not in json_dict[self.source]:
+                    # feed data is sometimes changed, so we need to refresh feed head every time
+                    if json_dict[self.source]:
+                        # head represents feed, but without items
+                        # first element is either head, usually, or item, if for some reason head is not present
+                        # perhaps, user deleted head, in this case cache will be repaired
+                        possible_head = json_dict[self.source][0]
+
+                        # this is the best and most intuitive implementation I have found so far
+                        try:
+                            # check, whether first element is head
+                            Feed(**possible_head)
+                        except pydantic.ValidationError:
+                            # if apparently possible_head is an item, do nothing
+                            pass
+                        else:
+                            # if possible_head is indeed head
+                            json_dict[self.source].remove(possible_head)
+                        # insert head at the beginning of the list
                         json_dict[self.source].insert(0, feed_head)
                 else:
                     json_dict[self.source] = list()

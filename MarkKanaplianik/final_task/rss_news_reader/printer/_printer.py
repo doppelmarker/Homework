@@ -59,8 +59,8 @@ class NewsPrinter:
             print(f"Feed: {feed.title}\n\n{feed.description}\n\nLink: {feed.link}\n")
             if feed.image:
                 print(f"Image: {feed.image}\n")
-            for item in feed.items:
-                print(f"Item {item.id}:", end="\n\n   ")
+            for i, item in enumerate(feed.items, start=1):
+                print(f"Item {i}:", end="\n\n   ")
                 NewsPrinter._print_item_stuffing(item)
                 print()
 
@@ -114,7 +114,7 @@ class NewsPrinter:
                         Style.NORMAL
                         + Fore.LIGHTWHITE_EX
                         + Back.LIGHTBLACK_EX
-                        + f"\nItem {item.id}:",
+                        + f"\nItem {i}:",
                         end="\n\n   ",
                     )
                 else:
@@ -122,7 +122,7 @@ class NewsPrinter:
                         Style.NORMAL
                         + Fore.LIGHTBLACK_EX
                         + Back.LIGHTWHITE_EX
-                        + f"\nItem {item.id}:",
+                        + f"\nItem {i}:",
                         end="\n\n   ",
                     )
                 NewsPrinter._print_item_stuffing(item)

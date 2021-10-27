@@ -7,7 +7,6 @@ from pydantic import BaseModel, root_validator
 class Item(BaseModel):
     """Represents an item in final RSS Feed, it corresponds to <item> from XML document."""
 
-    id: int
     title: Optional[str] = None
     description: Optional[str] = None
     link: Optional[str]
