@@ -28,7 +28,7 @@ class ArgParser:
             "--version",
             help="Print version info.",
             action="version",
-            version="3.2.3",
+            version="3.2.4",
         )
         self.parser.add_argument(
             "--verbose", help="Output verbose status messages.", action="store_true"

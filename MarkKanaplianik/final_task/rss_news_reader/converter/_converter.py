@@ -86,8 +86,8 @@ class Converter:
             logger.warning(
                 f"Failed to save pdf file. Seems directory {dir_path} doesn't exist."
             )
-        except Exception:
-            logger.warning(f"Failed to save pdf file for some unexpected reason.")
+        except Exception as e:
+            logger.warning(f"Failed to save pdf file because of {type(e).__name__}")
             os.remove(file_path)
         else:
             logger.info(f"Saved pdf in {file_path}.")

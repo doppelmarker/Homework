@@ -32,7 +32,7 @@ class Parser:
                             # issue with https://feedforall.com/sample.xml
                             raise XMLError(f"Tag {token} violates nesting rules!")
                 elif tokenizer.token_type == TokenType.TEXT:
-                    if not tokenizer.text.isspace():
+                    if tokenizer.text and not tokenizer.text.isspace():
                         stack[-1].children.append(token)
                         token.parent = stack[-1]
                 elif tokenizer.token_type == TokenType.CDATA:

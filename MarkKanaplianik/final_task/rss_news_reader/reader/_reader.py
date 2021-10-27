@@ -36,7 +36,6 @@ class Reader:
     def _is_rss(grabbed: Response):
         """Method defining whether grabbed content represents RSS channel."""
         for rss_mime_type in Reader.rss_mime_types:
-            ct = grabbed.headers["content-type"]
             if rss_mime_type in grabbed.headers["content-type"]:
                 return True
         return False

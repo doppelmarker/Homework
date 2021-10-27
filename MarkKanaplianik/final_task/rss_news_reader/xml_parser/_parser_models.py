@@ -9,7 +9,9 @@ class Attribute(BaseModel):
     """Represents an attribute inside XML tag."""
 
     name: str
-    value: str
+    # optional, because there may be the following situation: <script async
+    # src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>, notice async, it has no value
+    value: Optional[str]
 
 
 class Element(BaseModel):
@@ -60,7 +62,7 @@ class Element(BaseModel):
             if re.match("http", child.text):
                 yield child.text
             for attr in child.attributes:
-                if re.match("http", attr.value):
+                if attr.value and re.match("http", attr.value):
                     yield attr.value
             yield from child.find_urls()
 
@@ -87,9 +89,9 @@ class Element(BaseModel):
 
     def __eq__(self, other: "Element"):
         if (
-            self.tag_name == other.tag_name
-            and self.attributes == other.attributes
-            and self.text == other.text
+                self.tag_name == other.tag_name
+                and self.attributes == other.attributes
+                and self.text == other.text
         ):
             for self_child, other_child in zip(self.children, other.children):
                 if self_child != other_child:

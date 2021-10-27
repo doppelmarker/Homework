@@ -254,36 +254,102 @@ tokens.
 
 *Features*:
 
-+ XML CDATA parsing support: whenever CDATA is encountered in XML, it gets recursively parsed and substituted by a
++ `XML CDATA` parsing support: whenever CDATA is encountered in XML, it gets recursively parsed and substituted by a
   normal text in the final form.
   \
   XML CDATA example link: https://rss.art19.com/apology-line
-+ detecting invalid XML: parser notifies user with a wide range of messages whenever invalid syntax or some mistake was
-  encountered in XML document.
++ detecting `invalid XML`: parser notifies user with a wide range of messages whenever invalid syntax or some mistake
+  was encountered in XML document.
   \
   Invalid XML example: https://feedforall.com/sample.xml
   \
   Its fragment (notice tags order):
 
       <i><font color="#0000FF">Homework Assignments <br> School Cancellations <br> Calendar of Events <br> Sports Scores <br> Clubs/Organization Meetings <br> Lunches Menus </i></font>
++ handling `commented pieces`: whenever commented piece like `<!-- wp:html -->` is encountered, it gets skipped.
 
 ## Tested RSS links
 
-+ http://rss.cnn.com/rss/edition.rss
-+ https://worldoftanks.ru/ru/rss/news/
-+ https://feeds.megaphone.fm/WWO3519750118
-+ https://news.yahoo.com/rss/
-+ https://rss.art19.com/apology-line
-+ https://feeds.simplecast.com/54nAGcIl
-+ https://feedforall.com/sample.xml
-+ https://rss.dw.com/xml/rss-ru-rus
-+ https://people.onliner.by/feed
-+ https://brestcity.com/blog/feed
-+ https://www.theguardian.com/international/rss - fails saving to .pdf
-+ https://rss.dw.com/xml/rss-ru-news
-+ https://lenta.ru/rss/top7
-+ https://www.liga.net/tech/battles/rss.xml
-+ https://vse.sale/news/rss
++ Channels like these are parsed correctly:
+
+  http://rss.cnn.com/rss/edition.rss
+
+  https://worldoftanks.ru/ru/rss/news/
+
+  http://feeds.feedburner.com/welikedota
+
+
++ `curl's User-Agent` is used to access some RSS channels like this one:
+
+  https://www.dotabuff.com/blog.rss
+
+
++ `<` char inside text is parsed correctly, as well as `commented pieces` are skipped properly:
+
+  https://defenseofthepatience.libsyn.com/rss
+
+
++ `Empty XML document` is handled correctly:
+
+  https://www.joindota.com/feeds/news
+
+
++ `Big channels` are parsed correctly:
+
+  https://feeds.megaphone.fm/WWO3519750118
+
+  https://feeds.simplecast.com/54nAGcIl
+
+
++ `CDATA` is parsed correctly:
+
+  https://rss.art19.com/apology-line
+
+
++ User is notified if `invalid XML` is encountered:
+
+  https://feedforall.com/sample.xml
+
+
++ Feeds in `Russian` are handled completely correctly:
+
+  https://rss.dw.com/xml/rss-ru-rus
+
+  https://people.onliner.by/feed
+
+  https://brestcity.com/blog/feed
+
+  https://rss.dw.com/xml/rss-ru-news
+
+  https://lenta.ru/rss/top7
+
+  https://www.liga.net/tech/battles/rss.xml
+
+  https://vse.sale/news/rss
+
+
++ Some others:
+
+  https://news.yahoo.com/rss/
+
+  https://www.liquiddota.com/rss/news.xml
+
+
++ See `Known problematic feeds` section below:
+
+  https://www.theguardian.com/international/rss
+
+  https://www.hyprgame.com/blog/category/dota2/feed/
+
+## Known problematic feeds:
+
+Some problems with PDF conversion exist:
+
++ https://www.theguardian.com/international/rss error saving to .pdf; this error happens because
+  feature `-pdf-word-wrap: CJK;` is being used inside `.jinja2` template; without using this feature long strings are
+  not wrapped on the next line;
++ https://www.hyprgame.com/blog/category/dota2/feed/ error saving to .pdf (for some reason FileNotFoundError is raised
+  (No such file or directory), but both of them exist).
 
 ## Testing
 
@@ -293,7 +359,7 @@ Modules tested:
 + _builder.py
 + _parser.py
 
-Test coverage is 52%.
+Test coverage is 51%.
 
 In order to run tests, please, install dependencies:
 

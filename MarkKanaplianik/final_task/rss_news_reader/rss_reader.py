@@ -25,7 +25,7 @@ def main():
     except NewsNotFoundError as e:
         logger.info(e)
     except Exception as e:
-        # logger.exception(e)
+        logger.exception(e)
         print(f"RSS news reader crashed from {type(e).__name__}")
     finally:
         if not config.verbose:

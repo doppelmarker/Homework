@@ -70,12 +70,12 @@ class Tokenizer:
         self.has_end_tag = False
         self.tag_name: str
 
-    def _skip_head(self):
-        """Skips the leading tags like <?xml version="1.0" encoding="UTF-8"?>."""
+    def _skip_head(self) -> None:
+        """Skips the leading tags like <?xml version="1.0" encoding="UTF-8"?>"""
         while True:
             current = self.xml_io.tell()
             self._read_char(True)
-            suspect = self.xml_io.read(1)
+            suspect = self._read_char()
             if suspect == "?":
                 while self._read_char() != ">":
                     pass
@@ -83,11 +83,22 @@ class Tokenizer:
                 self.xml_io.seek(current)
                 return
 
+    def _skip_comment(self) -> None:
+        """Skips commented content: <!-- wp:cgb/block-libsyn-podcasting-gutenberg -->"""
+        self.xml_io.read(2)
+        while True:
+            while self._read_char() != "-":
+                pass
+            if self._read_char() == "-":
+                if self._read_char() == ">":
+                    self._parse_text()
+                    return
+
     def __iter__(self):
         """Tokenizer supports iterator protocol."""
         return self
 
-    def __next__(self):
+    def __next__(self) -> Element:
         """Every token is represented as Element. Each iteration private method _next_token() is called changing the
         state of Tokenizer instance before construction of another token."""
         self._next_token()
@@ -102,7 +113,7 @@ class Tokenizer:
         elif self.token_type == TokenType.EOF:
             raise StopIteration
 
-    def _next_token(self):
+    def _next_token(self) -> None:
         """Private method, which specifies logic on how the state of Tokenizer instance changes each iteration before
         construction of another token."""
         # skip leading whitespaces and newline characters
@@ -134,22 +145,43 @@ class Tokenizer:
         elif self.token_type == TokenType.EOF:
             pass
 
-    def _reset(self, *, reset_tag_name: bool):
+    def _reset(self, *, reset_tag_name: bool) -> None:
         """Resets the current state of Tokenizer instance."""
         if reset_tag_name:
             self.tag_name = ""
         self.attributes.clear()
         self.text = ""
 
-    def _match_next_char(self, expected: str, skip_ws: bool):
-        """Checks whether an expected char is satisfied by the next one."""
+    def _match_next_chars(self, expected_str: str) -> bool:
+        """Checks whether next several chars represent the expected string."""
+        current = self.xml_io.tell()
+        try:
+            for i in range(len(expected_str)):
+                if self._read_char() != expected_str[i]:
+                    return False
+            return True
+        finally:
+            self.xml_io.seek(current)
+
+    def _match_next_char_any_of(self, chars: str) -> bool:
+        """Check whether next char is any char in the given str."""
+        current = self.xml_io.tell()
+        try:
+            if self._read_char() in chars:
+                return True
+            return False
+        finally:
+            self.xml_io.seek(current)
+
+    def _match_closing_tag(self, skip_ws: bool) -> None:
+        """Reads one char and checks whether it is '>'."""
         char = self._read_char(skip_ws)
-        if char != expected:
+        if char != ">":
             raise UnexpectedCharacterError(
-                f"Unexpected character: expected '{expected}', got '{char}'!"
+                f"Unexpected character: expected '>', got '{char}'!"
             )
 
-    def _read_char(self, skip_ws: bool = False):
+    def _read_char(self, skip_ws: bool = False) -> str:
         """Reads one char from xml_io. skip_ws option lets user skip whitespaces following in a row."""
         char = self.xml_io.read(1)
         if skip_ws:
@@ -161,32 +193,46 @@ class Tokenizer:
                 continue
             return char
 
-    def _parse_cdata(self):
+    def _parse_cdata(self) -> None:
         """Parses CDATA in XML. Firstly it extracts pure HTML from CDATA, then adds cdata_tokenizer attribute to the
         instance of the current tokenizer, which is used for recursive tokenization."""
         cdata = "<!"
-        counter_left_bracket, counter_right_bracket = 1, 0
-        while counter_left_bracket != counter_right_bracket:
+
+        while True:
             char = self._read_char()
             cdata += char
-            if char == "<":
-                counter_left_bracket += 1
-            elif char == ">":
-                counter_right_bracket += 1
+            while char != "]":
+                char = self._read_char()
+                cdata += char
+            char = self._read_char()
+            cdata += char
+            if char == "]":
+                char = self._read_char()
+                cdata += char
+                if char == ">":
+                    break
 
         cdata_html = cdata.removeprefix("<![CDATA[").removesuffix("]]>").strip()
-        # sometimes cdata is represented as a pure text, wrap it into <p></p> tag to be sure it is html
-        cdata_html = f"<p>{cdata_html}</p>"
+        # sometimes cdata is represented as a pure text, wrap it into <html></html> tag to be sure it is html
+        cdata_html = f"<html>{cdata_html}</html>"
         self.cdata_tokenizer = Tokenizer(cdata_html)
         self.token_type = TokenType.CDATA
 
-    def _parse_text(self):
+    def _parse_text(self) -> None:
         """Parses text between tags in XML."""
         text = ""
         char = self._read_char()
         while char != "" and char != "<":
             text += char
             char = self._read_char()
+        # check whether '<' is not a part of the opening tag, but a part of text
+        if char == "<":
+            if self._match_next_char_any_of(" -0123456789:+,'\"\\"):
+                text += char
+                char = self._read_char()
+                while char != "" and char != "<":
+                    text += char
+                    char = self._read_char()
         # if not end of xml
         if char != "":
             self.token_type = TokenType.TEXT
@@ -194,13 +240,16 @@ class Tokenizer:
         else:
             self.token_type = TokenType.EOF
 
-    def _parse_tag(self):
+    def _parse_tag(self) -> None:
         """Parses tag in XML."""
         is_start_tag = True
 
         char = self._read_char()
         if char == "!":
-            self._parse_cdata()
+            if self._match_next_chars("[CDATA["):
+                self._parse_cdata()
+            elif self._match_next_chars("--"):
+                self._skip_comment()
             return
 
         if char == "/":
@@ -224,7 +273,7 @@ class Tokenizer:
                     pass
                 # in a single opening tag the next symbol after '/' must be '>': <person />
                 elif char == "/":
-                    self._match_next_char(">", False)
+                    self._match_closing_tag(False)
                     self.has_end_tag = True
                 else:
                     # presence of any character except whitespace after tag name is incorrect: <person@id="1">
@@ -244,23 +293,23 @@ class Tokenizer:
                             f"Incorrect char '{char}' encountered after tag name '{tag_name}'!"
                         )
                     # this checks if '>' is going after possible multiple whitespaces in a closing tag: </person     >
-                    self._match_next_char(">", True)
+                    self._match_closing_tag(True)
 
-    def _parse_attrs(self):
-        """Parses attributes inside XML tag."""
+    def _parse_attrs(self) -> bool:
+        """Parses attributes inside XML tag. Returns True, if it is a 'single' tag: <person />, else False."""
         # skip whitespaces and read the first symbol of the name of the first attribute: <person   id="1"> -> 'i'
         char = self._read_char(True)
 
         while char != ">":
             if char == "/":
                 # in a single opening tag the next symbol after '/' must be '>': <person id="1" />
-                self._match_next_char(">", False)
+                self._match_closing_tag(False)
                 return True
 
             attr_name = ""
 
             # read attribute name
-            while char.isalnum() or char == ":":
+            while char.isalnum() or char in ":-":
                 attr_name += char
                 char = self._read_char()
 
@@ -274,28 +323,26 @@ class Tokenizer:
             if char.isspace():
                 char = self._read_char(True)
 
-            if char != "=":
-                raise InvalidAttributeError(
-                    f"Invalid attribute in tag <{self.tag_name}>!"
-                )
+            attr_value = None
+            # if attribute has value afterwards
+            if char == "=":
+                # read the delimiter symbol: ' or "
+                char = self._read_char(True)
+                if char != "'" and char != '"':
+                    raise InvalidAttributeError(
+                        f"Invalid attribute in tag <{self.tag_name}>!"
+                    )
 
-            # read the delimiter symbol: ' or "
-            char = self._read_char(True)
-            if char != "'" and char != '"':
-                raise InvalidAttributeError(
-                    f"Invalid attribute in tag <{self.tag_name}>!"
-                )
+                delimiter = char
 
-            delimiter = char
-
-            char = self._read_char()
-
-            attr_value = ""
-
-            # read attribute value till the second delimiter
-            while char != delimiter:
-                attr_value += char
                 char = self._read_char()
+
+                attr_value = ""
+
+                # read attribute value till the second delimiter
+                while char != delimiter:
+                    attr_value += char
+                    char = self._read_char()
 
             # skip whitespaces and read the first symbol of the name of the next attribute or '/' if it is a single tag
             # or just '>' symbol and exit the loop
